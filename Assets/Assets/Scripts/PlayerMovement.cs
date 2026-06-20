@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    // FIX: Increased from 20f to 30f to make the player 50% faster
-    public float moveSpeed = 30f; //change speed in unity inspector instead
+    public float moveSpeed = 30f;
 
     private Rigidbody rb;
     private Vector3 moveInput;
@@ -29,10 +28,20 @@ public class PlayerMovement : MonoBehaviour
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveZ = Input.GetAxisRaw("Vertical");
 
-        // Format movement data for a 3D grid layout
-        moveInput = new Vector3(moveX, 0f, moveZ).normalized;
+        // 1. Get the camera's rotational angle, but ONLY its left/right spin (Y-axis)
+        // This completely eliminates errors caused by the camera tilting downward!
+        float cameraYRotation = Camera.main.transform.eulerAngles.y;
+        Quaternion cameraRotation = Quaternion.Euler(0f, cameraYRotation, 0f);
 
-        // Update our directional tracking BEFORE running animations
+        // 2. Create a clean local input vector based on your keys
+        Vector3 rawInput = new Vector3(moveX, 0f, moveZ).normalized;
+
+        // 3. Rotate our input vector to match the camera's compass heading
+        moveInput = cameraRotation * rawInput;
+
+        // Pass the raw keyboard inputs directly to the animation handler.
+        // Because moveInput is now perfectly aligned with the floor grid, 
+        // raw inputs will accurately match what your eyes expect on screen!
         UpdateFacingDirection(moveX, moveZ);
 
         // Handle Animations based on direction and movement state
@@ -91,7 +100,6 @@ public class PlayerMovement : MonoBehaviour
         // STATE 2: PLAYER IS IDLE (Standing Still)
         else
         {
-            // Corrected conditions so they check the right direction matching the animation clip
             if (lastDirection == "Right")
             {
                 anim.Play("Player_Idle_Right");
