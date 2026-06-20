@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float moveSpeed = 10f;
+    // FIX: Increased from 20f to 30f to make the player 50% faster
+    public float moveSpeed = 30f; //change speed in unity inspector instead
 
     private Rigidbody rb;
     private Vector3 moveInput;
@@ -12,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
     private SpriteRenderer spriteRenderer;
 
     // Track the last direction the player moved in ("Right", "Left", "Up", "Down")
-    private string lastDirection = "Right";
+    private string lastDirection = "Up";
 
     void Start()
     {
@@ -90,8 +91,8 @@ public class PlayerMovement : MonoBehaviour
         // STATE 2: PLAYER IS IDLE (Standing Still)
         else
         {
-            // Plays your brand new dedicated looping idle clips!
-            if (lastDirection == "Up")
+            // Corrected conditions so they check the right direction matching the animation clip
+            if (lastDirection == "Right")
             {
                 anim.Play("Player_Idle_Right");
                 spriteRenderer.flipX = false;

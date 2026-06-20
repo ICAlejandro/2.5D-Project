@@ -7,16 +7,24 @@ public class CameraFollow : MonoBehaviour
     // Drag your Player object into this slot in the Inspector
     public Transform target;
 
-    // How far away the camera should stay from the player
-    public Vector3 offset = new Vector3(0f, 5f, -10f);
+    // This will now be calculated automatically based on your scene setup
+    private Vector3 customOffset;
+
+    void Start()
+    {
+        // Safety check to ensure Unity doesn't error out if the target isn't assigned
+        if (target != null)
+        {
+            // Calculate the exact distance between your camera and the player right now
+            customOffset = transform.position - target.position;
+        }
+    }
 
     void LateUpdate()
     {
-        // Safety check to ensure Unity doesn't error out if the player is missing
         if (target == null) return;
 
-        // FIX: Removed the smooth LERP calculation.
-        // The camera now snaps to the player's position frame-for-frame instantly.
-        transform.position = target.position + offset;
+        // Maintain your custom hand-set view frame-for-frame instantly
+        transform.position = target.position + customOffset;
     }
 }
