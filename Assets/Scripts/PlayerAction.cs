@@ -1,18 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using UnityEngine.InputSystem; 
+using UnityEngine.InputSystem;
 
 public class PlayerAction : MonoBehaviour
 {
     [Header("Interaction Settings")]
-    public float InteractionDistance = 4f; 
-    public LayerMask interactableLayer;     
+    public float InteractionDistance = 4f;
+    public LayerMask interactableLayer;
 
     [Header("Master UI References")]
-    public GameObject masterDialogueCanvas; 
-    public TextMeshProUGUI UI_TextMesh;     
+    public GameObject masterDialogueCanvas;
+    public TextMeshProUGUI UI_TextMesh;
 
     private PlayerMovement playerMovement;
     private bool isDialogueOpen = false;
@@ -41,18 +39,23 @@ public class PlayerAction : MonoBehaviour
     void TryInteract()
     {
         RaycastHit hit;
-        
-        // Fallback: Use standard forward direction if PlayerMovement isn't attached
         Vector3 lookDirection = playerMovement != null ? playerMovement.GetLookDirection() : transform.forward;
-        
+
         if (Physics.Raycast(transform.position, lookDirection, out hit, InteractionDistance, interactableLayer))
         {
-            Interactable interactable = hit.collider.GetComponent<Interactable>();
-            if (interactable != null)
+            Interactable interactableObj = hit.collider.GetComponent<Interactable>();
+
+            if (interactableObj != null)
             {
                 if (masterDialogueCanvas == null || UI_TextMesh == null) return;
 
-                UI_TextMesh.text = interactable.dialogueText;
+                Farming farmingPot = hit.collider.GetComponent<Farming>();
+                if (farmingPot != null)
+                {
+                    farmingPot.Interact(gameObject);
+                }
+
+                UI_TextMesh.text = interactableObj.dialogueText;
                 masterDialogueCanvas.SetActive(true);
                 isDialogueOpen = true;
             }

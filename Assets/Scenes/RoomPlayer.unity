@@ -119,6 +119,38 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &7342208
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7342209}
+  m_Layer: 0
+  m_Name: Farm
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7342209
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7342208}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 562754337}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &70886509 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6829485909940997511, guid: cdc41fc02b3ebd5478a55ec9b375c2ca, type: 3}
@@ -877,6 +909,31 @@ MonoBehaviour:
   glowColor: {r: 0, g: 1, b: 1, a: 1}
   interactionDistance: 3
   playerTransform: {fileID: 0}
+--- !u!1 &562754336 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6701107142894802122, guid: 798bdc009f7dd4845a20b52650d67992, type: 3}
+  m_PrefabInstance: {fileID: 6361529334955376007}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &562754337 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6319902529880821360, guid: 798bdc009f7dd4845a20b52650d67992, type: 3}
+  m_PrefabInstance: {fileID: 6361529334955376007}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &562754340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 562754336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40cfd6806b3a53d4596ac853a0dedf5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Interactable
+  dialogueText: 'Plant?
+
+'
 --- !u!1001 &600580705
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3018,6 +3075,7 @@ GameObject:
   - component: {fileID: 1880889711}
   - component: {fileID: 1880889710}
   - component: {fileID: 1880889714}
+  - component: {fileID: 1880889715}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -3112,6 +3170,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   moveSpeed: 18
+  cameraTransform: {fileID: 0}
 --- !u!95 &1880889711
 Animator:
   serializedVersion: 7
@@ -3200,6 +3259,20 @@ MonoBehaviour:
     m_Bits: 8
   masterDialogueCanvas: {fileID: 483867971}
   UI_TextMesh: {fileID: 1616873799}
+--- !u!114 &1880889715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1880889707}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1be8879a5db7093438b930e9bb4f4048, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInventory
+  goldCount: 0
+  harvestedCrops: 0
 --- !u!1 &1890078161 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: f005387979b90424aa57e0cc5262e9de, type: 3}
@@ -3670,6 +3743,66 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: cdc41fc02b3ebd5478a55ec9b375c2ca, type: 3}
   m_PrefabInstance: {fileID: 300684725}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &6361529334955376007
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7342209}
+    m_Modifications:
+    - target: {fileID: 6319902529880821360, guid: 798bdc009f7dd4845a20b52650d67992, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.22551
+      objectReference: {fileID: 0}
+    - target: {fileID: 6319902529880821360, guid: 798bdc009f7dd4845a20b52650d67992, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.05756
+      objectReference: {fileID: 0}
+    - target: {fileID: 6319902529880821360, guid: 798bdc009f7dd4845a20b52650d67992, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 129.2958
+      objectReference: {fileID: 0}
+    - target: {fileID: 6319902529880821360, guid: 798bdc009f7dd4845a20b52650d67992, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6319902529880821360, guid: 798bdc009f7dd4845a20b52650d67992, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6319902529880821360, guid: 798bdc009f7dd4845a20b52650d67992, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6319902529880821360, guid: 798bdc009f7dd4845a20b52650d67992, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6319902529880821360, guid: 798bdc009f7dd4845a20b52650d67992, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6319902529880821360, guid: 798bdc009f7dd4845a20b52650d67992, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6319902529880821360, guid: 798bdc009f7dd4845a20b52650d67992, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6701107142894802122, guid: 798bdc009f7dd4845a20b52650d67992, type: 3}
+      propertyPath: m_Name
+      value: farm_pot
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6701107142894802122, guid: 798bdc009f7dd4845a20b52650d67992, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 562754340}
+  m_SourcePrefab: {fileID: 100100000, guid: 798bdc009f7dd4845a20b52650d67992, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -3685,3 +3818,4 @@ SceneRoots:
   - {fileID: 947070816}
   - {fileID: 1265330349}
   - {fileID: 1921501258}
+  - {fileID: 7342209}
