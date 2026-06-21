@@ -9,6 +9,7 @@ public class InteractableGlow : MonoBehaviour
     private Transform playerTransform;
     private PlayerAction playerAction;
     private Renderer meshRenderer;
+    private Collider objectCollider; 
     
     // Arrays to store data for objects with multiple materials
     private Material[] targetMaterials;
@@ -37,10 +38,12 @@ public class InteractableGlow : MonoBehaviour
             meshRenderer = GetComponentInChildren<MeshRenderer>();
         }
 
+        // Grab the collider component to measure precise distances from the surface
+        objectCollider = GetComponent<Collider>();
+
         // 3. Setup multiple material references and cache all starting baseline colors
         if (meshRenderer != null)
         {
-            // meshRenderer.materials automatically instantiates and creates an array copy of all materials
             targetMaterials = meshRenderer.materials;
             originalColors = new Color[targetMaterials.Length];
 
@@ -63,8 +66,28 @@ public class InteractableGlow : MonoBehaviour
         // Guard clause: stop calculation if player or materials aren't loaded properly
         if (playerTransform == null || playerAction == null || targetMaterials == null) return;
 
-        // Calculate the absolute straight-line distance between the player and this object
-        float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
+        float distanceToPlayer = 0f;
+
+        if (objectCollider != null)
+        {
+            // FIX: Using objectCollider.bounds.ClosestPoint works seamlessly across ALL colliders, including MeshColliders!
+            Vector3 closestPointOnBounds = objectCollider.bounds.ClosestPoint(playerTransform.position);
+            
+            if (closestPointOnBounds == playerTransform.position)
+            {
+                // Fallback if the player is fully inside the volume boundary
+                distanceToPlayer = Vector3.Distance(objectCollider.bounds.center, playerTransform.position);
+            }
+            else
+            {
+                distanceToPlayer = Vector3.Distance(closestPointOnBounds, playerTransform.position);
+            }
+        }
+        else
+        {
+            // Fallback to center transform pivot calculation if there's no collider found at all
+            distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
+        }
 
         // Safely check proximity against the PlayerAction script settings
         if (distanceToPlayer <= playerAction.InteractionDistance)

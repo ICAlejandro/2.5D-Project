@@ -2,11 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.InputSystem; // Added to talk to the new Input System
 
 public class PlayerAction : MonoBehaviour
 {
     [Header("Interaction Settings")]
-    public float InteractionDistance = 4f; // InteractableGlow reads this exact distance value!
+    public float InteractionDistance = 4f; 
     public LayerMask interactableLayer;     
 
     [Header("Master UI References")]
@@ -24,7 +25,8 @@ public class PlayerAction : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Return))
+        // New Input System check for the Enter/Return key being pressed this frame
+        if (Keyboard.current != null && Keyboard.current.enterKey.wasPressedThisFrame)
         {
             if (isDialogueOpen)
             {
