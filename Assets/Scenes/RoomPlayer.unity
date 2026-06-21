@@ -159,6 +159,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableGlow
   glowColor: {r: 0, g: 1, b: 1, a: 1}
+  interactionDistance: 3
+  playerTransform: {fileID: 0}
 --- !u!1 &136464731 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -890725610732284099, guid: 6f8500d283a5c9343ad93495804bd559, type: 3}
@@ -305,6 +307,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableGlow
   glowColor: {r: 0, g: 1, b: 1, a: 1}
+  interactionDistance: 3
+  playerTransform: {fileID: 0}
 --- !u!1001 &225099047
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -518,6 +522,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableGlow
   glowColor: {r: 0, g: 1, b: 1, a: 1}
+  interactionDistance: 3
+  playerTransform: {fileID: 0}
 --- !u!1 &315741062 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8939196909575815729, guid: 0dfe5f6676ef79346b2c9bff67391175, type: 3}
@@ -725,6 +731,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableGlow
   glowColor: {r: 0, g: 1, b: 1, a: 1}
+  interactionDistance: 3
+  playerTransform: {fileID: 0}
 --- !u!1 &483867971
 GameObject:
   m_ObjectHideFlags: 0
@@ -867,6 +875,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableGlow
   glowColor: {r: 0, g: 1, b: 1, a: 1}
+  interactionDistance: 3
+  playerTransform: {fileID: 0}
 --- !u!1001 &600580705
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1323,6 +1333,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableGlow
   glowColor: {r: 0, g: 1, b: 1, a: 1}
+  interactionDistance: 3
+  playerTransform: {fileID: 0}
 --- !u!1 &701578890 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 0dfe5f6676ef79346b2c9bff67391175, type: 3}
@@ -1361,7 +1373,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -1413,6 +1425,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableGlow
   glowColor: {r: 0, g: 1, b: 1, a: 1}
+  interactionDistance: 5
+  playerTransform: {fileID: 0}
 --- !u!1 &726744672 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6545136484630121345, guid: 164095cf72acfcd42922be497d25cd81, type: 3}
@@ -1480,6 +1494,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableGlow
   glowColor: {r: 0, g: 1, b: 1, a: 1}
+  interactionDistance: 3
+  playerTransform: {fileID: 0}
 --- !u!1 &840043738 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3103406077920639209, guid: cdc41fc02b3ebd5478a55ec9b375c2ca, type: 3}
@@ -1520,6 +1536,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableGlow
   glowColor: {r: 0, g: 1, b: 1, a: 1}
+  interactionDistance: 3
+  playerTransform: {fileID: 0}
 --- !u!1 &869908907
 GameObject:
   m_ObjectHideFlags: 0
@@ -1744,6 +1762,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableGlow
   glowColor: {r: 0, g: 1, b: 1, a: 1}
+  interactionDistance: 3
+  playerTransform: {fileID: 0}
 --- !u!1001 &1021373301
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1925,6 +1945,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableGlow
   glowColor: {r: 0, g: 1, b: 1, a: 1}
+  interactionDistance: 3
+  playerTransform: {fileID: 0}
 --- !u!1 &1200425657 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3402565155623547470, guid: cdc41fc02b3ebd5478a55ec9b375c2ca, type: 3}
@@ -1965,6 +1987,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableGlow
   glowColor: {r: 0, g: 1, b: 1, a: 1}
+  interactionDistance: 3
+  playerTransform: {fileID: 0}
 --- !u!1 &1210564647
 GameObject:
   m_ObjectHideFlags: 0
@@ -2445,6 +2469,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableGlow
   glowColor: {r: 0, g: 1, b: 1, a: 1}
+  interactionDistance: 3
+  playerTransform: {fileID: 0}
 --- !u!1 &1574951612 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -2511240423080479738, guid: cdc41fc02b3ebd5478a55ec9b375c2ca, type: 3}
@@ -2485,6 +2511,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableGlow
   glowColor: {r: 0, g: 1, b: 1, a: 1}
+  interactionDistance: 3
+  playerTransform: {fileID: 0}
 --- !u!1 &1616873797
 GameObject:
   m_ObjectHideFlags: 0
@@ -2787,7 +2815,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90fa5d20e567df6458a1b02e4577f8c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraZoneTrigger
-  balconyCamera: {fileID: 1962825708}
+  mainCamera: {fileID: 869908907}
+  zoneCamera: {fileID: 1962825708}
 --- !u!65 &1763025292
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3209,7 +3238,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -3261,6 +3290,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableGlow
   glowColor: {r: 0, g: 1, b: 1, a: 1}
+  interactionDistance: 5
+  playerTransform: {fileID: 0}
 --- !u!1 &1921501257
 GameObject:
   m_ObjectHideFlags: 0
@@ -3498,6 +3529,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableGlow
   glowColor: {r: 0, g: 1, b: 1, a: 1}
+  interactionDistance: 3
+  playerTransform: {fileID: 0}
 --- !u!1 &2015581962 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 164095cf72acfcd42922be497d25cd81, type: 3}
@@ -3536,7 +3569,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -3588,6 +3621,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableGlow
   glowColor: {r: 0, g: 1, b: 1, a: 1}
+  interactionDistance: 5
+  playerTransform: {fileID: 0}
 --- !u!1 &2067907859 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5518577789578991427, guid: cdc41fc02b3ebd5478a55ec9b375c2ca, type: 3}
@@ -3628,6 +3663,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableGlow
   glowColor: {r: 0, g: 1, b: 1, a: 1}
+  interactionDistance: 3
+  playerTransform: {fileID: 0}
 --- !u!4 &2100577085 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: cdc41fc02b3ebd5478a55ec9b375c2ca, type: 3}

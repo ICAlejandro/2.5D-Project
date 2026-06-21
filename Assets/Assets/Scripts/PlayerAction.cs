@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using UnityEngine.InputSystem; // Added to talk to the new Input System
+using UnityEngine.InputSystem; 
 
 public class PlayerAction : MonoBehaviour
 {
@@ -25,7 +25,6 @@ public class PlayerAction : MonoBehaviour
 
     void Update()
     {
-        // New Input System check for the Enter/Return key being pressed this frame
         if (Keyboard.current != null && Keyboard.current.enterKey.wasPressedThisFrame)
         {
             if (isDialogueOpen)
@@ -41,10 +40,10 @@ public class PlayerAction : MonoBehaviour
 
     void TryInteract()
     {
-        if (playerMovement == null) return;
-
         RaycastHit hit;
-        Vector3 lookDirection = playerMovement.GetLookDirection();
+        
+        // Fallback: Use standard forward direction if PlayerMovement isn't attached
+        Vector3 lookDirection = playerMovement != null ? playerMovement.GetLookDirection() : transform.forward;
         
         if (Physics.Raycast(transform.position, lookDirection, out hit, InteractionDistance, interactableLayer))
         {

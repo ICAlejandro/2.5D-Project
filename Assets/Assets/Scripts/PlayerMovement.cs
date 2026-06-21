@@ -6,6 +6,9 @@ public class PlayerMovement : MonoBehaviour
 {
     public float moveSpeed = 30f;
 
+    [Header("Camera Reference (Optional Override)")]
+    public Transform cameraTransform;
+
     private Rigidbody rb;
     private Vector3 moveInput;
     private Animator anim;
@@ -14,17 +17,16 @@ public class PlayerMovement : MonoBehaviour
     private string lastDirection = "Up";
     private Vector3 lookDirection = Vector3.forward; 
 
-    private Transform mainCameraTransform;
-
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
-        if (Camera.main != null)
+        // Fallback: If no camera transform is manually assigned, use the main camera
+        if (cameraTransform == null && Camera.main != null)
         {
-            mainCameraTransform = Camera.main.transform;
+            cameraTransform = Camera.main.transform;
         }
     }
 
@@ -34,9 +36,9 @@ public class PlayerMovement : MonoBehaviour
         float moveZ = Input.GetAxisRaw("Vertical");
 
         float cameraYRotation = 0f;
-        if (mainCameraTransform != null)
+        if (cameraTransform != null)
         {
-            cameraYRotation = mainCameraTransform.eulerAngles.y;
+            cameraYRotation = cameraTransform.eulerAngles.y;
         }
         
         Quaternion cameraRotation = Quaternion.Euler(0f, cameraYRotation, 0f);

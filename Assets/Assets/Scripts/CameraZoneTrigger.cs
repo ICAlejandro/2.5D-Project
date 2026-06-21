@@ -2,12 +2,13 @@ using UnityEngine;
 
 public class CameraZoneTrigger : MonoBehaviour
 {
-    public GameObject balconyCamera;
-    private GameObject mainCamera;
+    public GameObject mainCamera;
+    public GameObject zoneCamera; // Renamed 'balconyCamera' to be generic and reusable
 
     void Start()
     {
-        if (Camera.main != null)
+        // Fallback: If you forget to assign the main camera, find it automatically
+        if (mainCamera == null && Camera.main != null)
         {
             mainCamera = Camera.main.gameObject;
         }
@@ -15,18 +16,18 @@ public class CameraZoneTrigger : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") && balconyCamera != null && mainCamera != null)
+        if (other.CompareTag("Player") && zoneCamera != null && mainCamera != null)
         {
             mainCamera.SetActive(false);
-            balconyCamera.SetActive(true);
+            zoneCamera.SetActive(true);
         }
     }
 
     void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player") && balconyCamera != null && mainCamera != null)
+        if (other.CompareTag("Player") && zoneCamera != null && mainCamera != null)
         {
-            balconyCamera.SetActive(false);
+            zoneCamera.SetActive(false);
             mainCamera.SetActive(true);
         }
     }

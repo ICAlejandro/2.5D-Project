@@ -6,25 +6,32 @@ public class InteractableGlow : MonoBehaviour
     [Header("Glow Settings")]
     [ColorUsage(true, true)] 
     public Color glowColor = Color.cyan;
-
-    private Transform playerTransform;
-    private PlayerAction playerAction;
-    private Collider objectCollider; 
     
+    [Tooltip("The distance from the player where this object starts glowing.")]
+    public float interactionDistance = 3f;
+
+    [Header("Player Target override (Optional)")]
+    public Transform playerTransform;
+    
+    private Collider objectCollider; 
     private List<Material> targetMaterials = new List<Material>();
     private List<Color> originalColors = new List<Color>();
     private bool isGlowing = false;
 
     void Start()
     {
-        playerAction = Object.FindFirstObjectByType<PlayerAction>();
-        if (playerAction != null)
+        // Fallback: If no player transform is manually assigned, search by tag
+        if (playerTransform == null)
         {
-            playerTransform = playerAction.transform;
-        }
-        else
-        {
-            Debug.LogWarning($"InteractableGlow on {gameObject.name} cannot find a Player object with a PlayerAction script attached to it!");
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+            {
+                playerTransform = player.transform;
+            }
+            else
+            {
+                Debug.LogWarning($"InteractableGlow on {gameObject.name} cannot find a GameObject with the 'Player' tag!");
+            }
         }
 
         objectCollider = GetComponent<Collider>();
@@ -54,7 +61,7 @@ public class InteractableGlow : MonoBehaviour
 
     void Update()
     {
-        if (playerTransform == null || playerAction == null || targetMaterials.Count == 0) return;
+        if (playerTransform == null || targetMaterials.Count == 0) return;
 
         float distanceToPlayer = 0f;
 
@@ -76,7 +83,8 @@ public class InteractableGlow : MonoBehaviour
             distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
         }
 
-        if (distanceToPlayer <= playerAction.InteractionDistance)
+        // Uses the standalone threshold variable instead of checking an external player script
+        if (distanceToPlayer <= interactionDistance)
         {
             if (!isGlowing)
             {
