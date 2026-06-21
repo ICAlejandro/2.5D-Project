@@ -14,11 +14,18 @@ public class PlayerMovement : MonoBehaviour
     private string lastDirection = "Up";
     private Vector3 lookDirection = Vector3.forward; 
 
+    private Transform mainCameraTransform;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        if (Camera.main != null)
+        {
+            mainCameraTransform = Camera.main.transform;
+        }
     }
 
     void Update()
@@ -26,7 +33,12 @@ public class PlayerMovement : MonoBehaviour
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveZ = Input.GetAxisRaw("Vertical");
 
-        float cameraYRotation = Camera.main.transform.eulerAngles.y;
+        float cameraYRotation = 0f;
+        if (mainCameraTransform != null)
+        {
+            cameraYRotation = mainCameraTransform.eulerAngles.y;
+        }
+        
         Quaternion cameraRotation = Quaternion.Euler(0f, cameraYRotation, 0f);
 
         Vector3 rawInput = new Vector3(moveX, 0f, moveZ).normalized;
