@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,6 +7,16 @@ public class OnlineShop : MonoBehaviour
     [Header("Shop Balancing")]
     public int seedCost = 5;
     public int cropValue = 10;
+
+    [Header("Delivery Settings")]
+    [Tooltip("How many seconds it takes for the package to arrive.")]
+    [SerializeField] private float deliveryTimeSeconds = 3f;
+    
+    [Tooltip("Drop your 3D furniture_package prefab here.")]
+    [SerializeField] private GameObject packagePrefab;
+    
+    [Tooltip("Where the packages will spawn and clip together.")]
+    [SerializeField] private Transform deliverySpawnPoint;
 
     [Header("UI Panel Reference")]
     public GameObject shopCanvas;
@@ -29,7 +40,6 @@ public class OnlineShop : MonoBehaviour
         if (sellCropButton != null) sellCropButton.onClick.AddListener(SellCrop);
         if (closeButton != null) closeButton.onClick.AddListener(CloseShop);
         
-        // Find the HUD system in the scene
         playerHUD = FindFirstObjectByType<PlayerHUD>();
     }
 
@@ -41,11 +51,10 @@ public class OnlineShop : MonoBehaviour
         {
             shopCanvas.SetActive(true);
             
-            // Unlock mouse cursor so the player can click UI elements
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
 
-            Time.timeScale = 0f; // Freeze game actions while menu is open
+            Time.timeScale = 0f; 
         }
     }
 
@@ -56,11 +65,30 @@ public class OnlineShop : MonoBehaviour
         if (activePlayerInventory.goldCount >= seedCost)
         {
             activePlayerInventory.goldCount -= seedCost;
-            activePlayerInventory.AddSeeds(1);
-            Debug.Log("Bought 1 seed via Online Shop!");
+            Debug.Log("Order placed! Shipping 1 seed...");
 
-            // Force HUD to update its numbers immediately while paused
             if (playerHUD != null) playerHUD.UpdateHUDVisuals();
+
+            StartCoroutine(ProcessDeliveryRoutine(1));
+        }
+    }
+
+    private IEnumerator ProcessDeliveryRoutine(int amountOrdered)
+    {
+        yield return new WaitForSecondsRealtime(deliveryTimeSeconds);
+
+        if (packagePrefab != null && deliverySpawnPoint != null)
+        {
+            // Spawn the package exactly at the spawn point position so they clip together
+            GameObject spawnedPackage = Instantiate(packagePrefab, deliverySpawnPoint.position, deliverySpawnPoint.rotation);
+            Debug.Log("A package has arrived and clipped into the delivery point.");
+
+            // Inject the order details
+            DeliveryPackage packageScript = spawnedPackage.GetComponent<DeliveryPackage>();
+            if (packageScript != null)
+            {
+                packageScript.seedCountInside = amountOrdered;
+            }
         }
     }
 
@@ -74,7 +102,6 @@ public class OnlineShop : MonoBehaviour
             activePlayerInventory.goldCount += cropValue;
             Debug.Log("Sold 1 crop via Online Shop!");
 
-            // Force HUD to update its numbers immediately while paused
             if (playerHUD != null) playerHUD.UpdateHUDVisuals();
         }
     }
@@ -86,10 +113,9 @@ public class OnlineShop : MonoBehaviour
             shopCanvas.SetActive(false);
         }
 
-        // Relock mouse cursor for standard gameplay movement
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        Time.timeScale = 1f; // Resume gameplay execution
+        Time.timeScale = 1f; 
     }
 }
