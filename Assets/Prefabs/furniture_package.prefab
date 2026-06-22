@@ -178,5 +178,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DeliveryPackage
   seedCountInside: 1
-  interactionRangeOverride: 10
-  rotationSpeed: 45
+  interactionRangeOverride: 3
+  rotationSpeed: 50

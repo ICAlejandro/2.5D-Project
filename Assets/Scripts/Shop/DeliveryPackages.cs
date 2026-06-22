@@ -5,16 +5,12 @@ public class DeliveryPackage : MonoBehaviour
     [Header("Package Contents")]
     public int seedCountInside = 1;
 
-    [Header("Custom Interaction Range")]
-    public float interactionRangeOverride = 8f;
-
     [Header("Spinning Visuals")]
     [Tooltip("Degrees per second the package rotates around its vertical Y axis.")]
     [SerializeField] private float rotationSpeed = 45f;
 
     void Update()
     {
-        // Smoothly rotate the package on the ground
         transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
     }
 
@@ -33,7 +29,6 @@ public class DeliveryPackage : MonoBehaviour
                 hud.UpdateHUDVisuals();
             }
 
-            // Destroys itself cleanly, leaving any packages clipped underneath intact
             Destroy(gameObject);
         }
     }

@@ -1309,31 +1309,11 @@ MonoBehaviour:
   glowColor: {r: 0, g: 1, b: 1, a: 1}
   interactionDistance: 3
   playerTransform: {fileID: 0}
---- !u!1 &562754336 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6701107142894802122, guid: 798bdc009f7dd4845a20b52650d67992, type: 3}
-  m_PrefabInstance: {fileID: 6361529334955376007}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &562754337 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6319902529880821360, guid: 798bdc009f7dd4845a20b52650d67992, type: 3}
   m_PrefabInstance: {fileID: 6361529334955376007}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &562754340
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 562754336}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40cfd6806b3a53d4596ac853a0dedf5a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Interactable
-  dialogueText: 'Plant?
-
-'
 --- !u!1001 &600580705
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1665,12 +1645,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5518577789578991427, guid: cdc41fc02b3ebd5478a55ec9b375c2ca, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2067907864}
-    - targetCorrespondingSourceObject: {fileID: -5568371526223589888, guid: cdc41fc02b3ebd5478a55ec9b375c2ca, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1978118662}
-    - targetCorrespondingSourceObject: {fileID: -5568371526223589888, guid: cdc41fc02b3ebd5478a55ec9b375c2ca, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1978118665}
     - targetCorrespondingSourceObject: {fileID: 8540762849855351454, guid: cdc41fc02b3ebd5478a55ec9b375c2ca, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1447987277}
@@ -4846,13 +4820,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0be031c04a75b946847d5eea15aa53f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAction
-  InteractionDistance: 2
+  InteractionDistance: 1.5
   interactableLayer:
     serializedVersion: 2
     m_Bits: 8
   boxWidth: 3
   boxHeight: 5
-  boxDepth: 3
+  boxDepth: 4
   masterDialogueCanvas: {fileID: 483867971}
   UI_TextMesh: {fileID: 1616873799}
 --- !u!114 &1880889715
@@ -5331,48 +5305,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 947070816}
   m_LocalEulerAnglesHint: {x: 21.02, y: 0, z: 0}
---- !u!1 &1978118660 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -5568371526223589888, guid: cdc41fc02b3ebd5478a55ec9b375c2ca, type: 3}
-  m_PrefabInstance: {fileID: 600580705}
-  m_PrefabAsset: {fileID: 0}
---- !u!64 &1978118662
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1978118660}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 2534964839176971238, guid: cdc41fc02b3ebd5478a55ec9b375c2ca, type: 3}
---- !u!114 &1978118665
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1978118660}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18614227374a30a448eacf0bf18bc400, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InteractableGlow
-  glowColor: {r: 0, g: 1, b: 1, a: 1}
-  interactionDistance: 3
-  playerTransform: {fileID: 0}
 --- !u!1 &2015581962 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 164095cf72acfcd42922be497d25cd81, type: 3}
@@ -5571,10 +5503,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6701107142894802122, guid: 798bdc009f7dd4845a20b52650d67992, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 562754340}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 798bdc009f7dd4845a20b52650d67992, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
