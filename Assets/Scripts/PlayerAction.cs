@@ -23,6 +23,9 @@ public class PlayerAction : MonoBehaviour
 
     void Update()
     {
+        // Don't accept interaction inputs if a menu has already paused the game loop
+        if (Time.timeScale == 0f) return;
+
         if (Keyboard.current != null && Keyboard.current.enterKey.wasPressedThisFrame)
         {
             if (isDialogueOpen)
@@ -43,19 +46,28 @@ public class PlayerAction : MonoBehaviour
 
         if (Physics.Raycast(transform.position, lookDirection, out hit, InteractionDistance, interactableLayer))
         {
-            Interactable interactableObj = hit.collider.GetComponent<Interactable>();
+            // 1. Check for the Online Shop component first
+            OnlineShop onlineShopComponent = hit.collider.GetComponent<OnlineShop>();
+            if (onlineShopComponent != null)
+            {
+                onlineShopComponent.OpenShop(gameObject);
+                return; 
+            }
 
-            if (interactableObj != null)
+            // 2. Check for a Farming component next
+            Farming farmingPot = hit.collider.GetComponent<Farming>();
+            if (farmingPot != null)
+            {
+                farmingPot.Interact(gameObject);
+            }
+
+            // 3. Display dialogue box if the object holds basic text data
+            Interactable textData = hit.collider.GetComponent<Interactable>();
+            if (textData != null)
             {
                 if (masterDialogueCanvas == null || UI_TextMesh == null) return;
 
-                Farming farmingPot = hit.collider.GetComponent<Farming>();
-                if (farmingPot != null)
-                {
-                    farmingPot.Interact(gameObject);
-                }
-
-                UI_TextMesh.text = interactableObj.dialogueText;
+                UI_TextMesh.text = textData.dialogueText;
                 masterDialogueCanvas.SetActive(true);
                 isDialogueOpen = true;
             }

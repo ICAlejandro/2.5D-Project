@@ -27,8 +27,8 @@ Transform:
   m_GameObject: {fileID: 6519464876043553400}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.37, z: 0.01}
-  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_LocalPosition: {x: 0, y: 3.47, z: 0.01}
+  m_LocalScale: {x: 21.499243, y: 21.499243, z: 21.499243}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6319902529880821360}
@@ -166,6 +166,26 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: -2073026630169773320, guid: 5716b149a6cf94f44af5b1126be2a046, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 110.92
+      objectReference: {fileID: 0}
+    - target: {fileID: -2073026630169773320, guid: 5716b149a6cf94f44af5b1126be2a046, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 110.92
+      objectReference: {fileID: 0}
+    - target: {fileID: -2073026630169773320, guid: 5716b149a6cf94f44af5b1126be2a046, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 110.92
+      objectReference: {fileID: 0}
+    - target: {fileID: -2073026630169773320, guid: 5716b149a6cf94f44af5b1126be2a046, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -2073026630169773320, guid: 5716b149a6cf94f44af5b1126be2a046, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.37
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 5716b149a6cf94f44af5b1126be2a046, type: 3}
       propertyPath: m_Name
       value: farm_pot
@@ -173,6 +193,22 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 5716b149a6cf94f44af5b1126be2a046, type: 3}
       propertyPath: m_Layer
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1858077740028315276, guid: 5716b149a6cf94f44af5b1126be2a046, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 113.03999
+      objectReference: {fileID: 0}
+    - target: {fileID: 1858077740028315276, guid: 5716b149a6cf94f44af5b1126be2a046, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 113.03999
+      objectReference: {fileID: 0}
+    - target: {fileID: 1858077740028315276, guid: 5716b149a6cf94f44af5b1126be2a046, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 113.03999
+      objectReference: {fileID: 0}
+    - target: {fileID: 1858077740028315276, guid: 5716b149a6cf94f44af5b1126be2a046, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.1304
       objectReference: {fileID: 0}
     - target: {fileID: 8753503399339579447, guid: 5716b149a6cf94f44af5b1126be2a046, type: 3}
       propertyPath: m_Layer
@@ -192,6 +228,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 4475474202876303372}
   m_SourcePrefab: {fileID: 100100000, guid: 5716b149a6cf94f44af5b1126be2a046, type: 3}
+--- !u!23 &5498561844889260297 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7174053348981933934, guid: 5716b149a6cf94f44af5b1126be2a046, type: 3}
+  m_PrefabInstance: {fileID: 5782187204853819803}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6319902529880821360 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5716b149a6cf94f44af5b1126be2a046, type: 3}
@@ -238,6 +279,10 @@ MonoBehaviour:
   currentStage: 0
   timeToGrow: 5
   cropValue: 10
-  plant: {fileID: 5880222067234876390}
+  isWatered: 0
+  plantSpriteRenderer: {fileID: 5880222067234876390}
   plantSampleSprite: {fileID: -2093741946, guid: b0d06b4b925ef114e971a5ca6192159c, type: 3}
   plantAnimator: {fileID: 6836223285724571208}
+  soilMeshRenderer: {fileID: 5498561844889260297}
+  drySoilMaterial: {fileID: 2100000, guid: c4149c85870a0c845851dc9fbaa443a2, type: 2}
+  wetSoilMaterial: {fileID: -3846018093981099296, guid: 5716b149a6cf94f44af5b1126be2a046, type: 3}
