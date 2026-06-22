@@ -3,9 +3,64 @@ guid: bce09eca3e50f9b45a78a77a58119cec
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Applicance
+    second: {fileID: -4224619875639935017, guid: 30b0b563f6bd3004f9f92cfe5ae7c074, type: 3}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Applicance.001
+    second: {fileID: 5784831221087681244, guid: 30b0b563f6bd3004f9f92cfe5ae7c074, type: 3}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Clothe
+    second: {fileID: -6348594226039751668, guid: 30b0b563f6bd3004f9f92cfe5ae7c074, type: 3}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Floor
+    second: {fileID: 3876542345217667742, guid: 30b0b563f6bd3004f9f92cfe5ae7c074, type: 3}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Metallic
+    second: {fileID: -2322909715820737869, guid: 30b0b563f6bd3004f9f92cfe5ae7c074, type: 3}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Metallic.001
+    second: {fileID: 3344392674392863240, guid: 30b0b563f6bd3004f9f92cfe5ae7c074, type: 3}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Sage
+    second: {fileID: -90529073217795360, guid: 30b0b563f6bd3004f9f92cfe5ae7c074, type: 3}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stone
+    second: {fileID: 963798294112862009, guid: 30b0b563f6bd3004f9f92cfe5ae7c074, type: 3}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Wall
+    second: {fileID: -1255982633427224767, guid: 30b0b563f6bd3004f9f92cfe5ae7c074, type: 3}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: White
+    second: {fileID: -8848810374240701247, guid: 30b0b563f6bd3004f9f92cfe5ae7c074, type: 3}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Wood
+    second: {fileID: -1444460858095362738, guid: 30b0b563f6bd3004f9f92cfe5ae7c074, type: 3}
   materials:
-    materialImportMode: 2
+    materialImportMode: 1
     materialName: 0
     materialSearch: 1
     materialLocation: 1

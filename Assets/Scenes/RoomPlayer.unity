@@ -587,13 +587,7 @@ PrefabInstance:
     - {fileID: 8821623529969584324, guid: bce09eca3e50f9b45a78a77a58119cec, type: 3}
     - {fileID: -8700617353114198275, guid: bce09eca3e50f9b45a78a77a58119cec, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: -5711052370896006010, guid: bce09eca3e50f9b45a78a77a58119cec, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1263817554}
-    - targetCorrespondingSourceObject: {fileID: -3852341972610935857, guid: bce09eca3e50f9b45a78a77a58119cec, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1923637195}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bce09eca3e50f9b45a78a77a58119cec, type: 3}
 --- !u!1001 &300684725
 PrefabInstance:
@@ -3071,33 +3065,6 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
---- !u!1 &1263817552 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -5711052370896006010, guid: bce09eca3e50f9b45a78a77a58119cec, type: 3}
-  m_PrefabInstance: {fileID: 225099047}
-  m_PrefabAsset: {fileID: 0}
---- !u!64 &1263817554
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1263817552}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -7513297493162946847, guid: bce09eca3e50f9b45a78a77a58119cec, type: 3}
 --- !u!1 &1265330348
 GameObject:
   m_ObjectHideFlags: 0
@@ -3398,6 +3365,7 @@ GameObject:
   - component: {fileID: 1423881663}
   - component: {fileID: 1423881662}
   - component: {fileID: 1423881664}
+  - component: {fileID: 1423881665}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -3514,6 +3482,20 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!114 &1423881665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423881661}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f0858ae8d5a72942b67859c2230feea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DayNightCycle
+  dayDurationInSeconds: 60
+  currentTimeOfDay: 0
 --- !u!1 &1447987275 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8540762849855351454, guid: cdc41fc02b3ebd5478a55ec9b375c2ca, type: 3}
@@ -4972,33 +4954,6 @@ Transform:
   - {fileID: 483867975}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1923637193 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -3852341972610935857, guid: bce09eca3e50f9b45a78a77a58119cec, type: 3}
-  m_PrefabInstance: {fileID: 225099047}
-  m_PrefabAsset: {fileID: 0}
---- !u!64 &1923637195
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1923637193}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -6281424698479989189, guid: bce09eca3e50f9b45a78a77a58119cec, type: 3}
 --- !u!1 &1933873261
 GameObject:
   m_ObjectHideFlags: 0
