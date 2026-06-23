@@ -26,28 +26,48 @@ public class PlayerHUD : MonoBehaviour
         }
 
         timeManager = FindFirstObjectByType<TimeManager>();
+
+        // Subscribe to inventory changes so the HUD only updates when something actually changes
+        if (playerInventory != null)
+        {
+            playerInventory.OnInventoryChanged += UpdateHUDVisuals;
+        }
+
         UpdateHUDVisuals();
+    }
+
+    void OnDestroy()
+    {
+        // Always unsubscribe to avoid errors if the HUD is destroyed before the inventory
+        if (playerInventory != null)
+        {
+            playerInventory.OnInventoryChanged -= UpdateHUDVisuals;
+        }
     }
 
     void Update()
     {
-        UpdateHUDVisuals();
+        // Time still needs to poll since it updates continuously every frame
+        UpdateTimeDisplay();
     }
 
+    // Called by OnInventoryChanged event — only runs when inventory actually changes
     public void UpdateHUDVisuals()
     {
-        if (playerInventory != null)
-        {
-            if (goldText != null) goldText.text = "Gold: " + playerInventory.goldCount;
-            if (seedText != null) seedText.text = "Seeds: " + playerInventory.seedCount;
-            if (waterText != null) waterText.text = "Water Can: " + (playerInventory.hasWater ? "Full" : "Empty");
-            if (cropText != null) cropText.text = "Crops: " + playerInventory.cropCount;
-        }
+        if (playerInventory == null) return;
 
-        if (timeManager != null)
-        {
-            if (dateText != null) dateText.text = "Date: " + timeManager.GetFormattedDate();
-            if (timeText != null) timeText.text = "Time: " + timeManager.GetFormattedTime();
-        }
+        if (goldText != null) goldText.text = "Gold: " + playerInventory.goldCount;
+        if (seedText != null) seedText.text = "Seeds: " + playerInventory.seedCount;
+        if (waterText != null) waterText.text = "Water Can: " + (playerInventory.hasWater ? "Full" : "Empty");
+        if (cropText != null) cropText.text = "Crops: " + playerInventory.cropCount;
+    }
+
+    // Called every frame in Update — time needs continuous refreshing
+    private void UpdateTimeDisplay()
+    {
+        if (timeManager == null) return;
+
+        if (dateText != null) dateText.text = "Date: " + timeManager.GetFormattedDate();
+        if (timeText != null) timeText.text = "Time: " + timeManager.GetFormattedTime();
     }
 }
