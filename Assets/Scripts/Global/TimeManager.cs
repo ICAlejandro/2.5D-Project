@@ -1,6 +1,10 @@
 using UnityEngine;
 
-public class TimeManager : MonoBehaviour
+/// <summary>
+/// Concrete time implementation. Registers itself as ITimeProvider
+/// so consumers never reference this class directly.
+/// </summary>
+public class TimeManager : MonoBehaviour, ITimeProvider
 {
     [Header("Time Calibration")]
     [Tooltip("How long one full in-game day takes in real-world seconds.")]
@@ -14,20 +18,38 @@ public class TimeManager : MonoBehaviour
     public int currentSecond;
     public int currentMinute;
     public int currentHour;
-    public int currentDay = 1;
+    public int currentDay   = 1;
     public int currentMonth = 1;
-    public int currentYear = 2026;
+    public int currentYear  = 2026;
 
-    private const int HoursInDay = 24;
-    private const int MinutesInHour = 60;
+    private const int HoursInDay      = 24;
+    private const int MinutesInHour   = 60;
     private const int SecondsInMinute = 60;
-    private const int DaysInMonth = 30;
-    private const int MonthsInYear = 12;
+    private const int DaysInMonth     = 30;
+    private const int MonthsInYear    = 12;
 
+    // ── ITimeProvider ──────────────────────────────────────────────────────
+    public float CurrentTimeOfDay
+    {
+        get => currentTimeOfDay;
+        set => currentTimeOfDay = value;
+    }
+
+    public float DayDurationInSeconds
+    {
+        get => dayDurationInSeconds;
+        set => dayDurationInSeconds = value;
+    }
+
+    public int CurrentDay   => currentDay;
+    public int CurrentMonth => currentMonth;
+    public int CurrentYear  => currentYear;
+
+    // ── Unity Lifecycle ────────────────────────────────────────────────────
     void Awake()
     {
-        // Register so any script can find this instantly without a scene search
-        ServiceLocator.Register<TimeManager>(this);
+        // Register as the interface — consumers never need to know it's a TimeManager
+        ServiceLocator.Register<ITimeProvider>(this);
     }
 
     void Update()
@@ -35,6 +57,19 @@ public class TimeManager : MonoBehaviour
         CalculateInGameClock();
     }
 
+    // ── ITimeProvider methods ──────────────────────────────────────────────
+    public string GetFormattedDate()
+        => $"{currentMonth:D2}/{currentDay:D2}/{currentYear}";
+
+    public string GetFormattedTime()
+    {
+        string period = currentHour >= 12 ? "PM" : "AM";
+        int hour12    = currentHour % 12;
+        if (hour12 == 0) hour12 = 12;
+        return $"{hour12}:{currentMinute:D2} {period}";
+    }
+
+    // ── Private ────────────────────────────────────────────────────────────
     private void CalculateInGameClock()
     {
         if (dayDurationInSeconds <= 0) dayDurationInSeconds = 1f;
@@ -47,14 +82,13 @@ public class TimeManager : MonoBehaviour
             AdvanceCalendarDay();
         }
 
-        float totalSecondsInDay = HoursInDay * MinutesInHour * SecondsInMinute;
+        float totalSecondsInDay    = HoursInDay * MinutesInHour * SecondsInMinute;
         float currentSecondsElapsed = currentTimeOfDay * totalSecondsInDay;
 
-        currentHour = Mathf.FloorToInt(currentSecondsElapsed / (MinutesInHour * SecondsInMinute));
-        float remainderMinutes = currentSecondsElapsed % (MinutesInHour * SecondsInMinute);
-
-        currentMinute = Mathf.FloorToInt(remainderMinutes / SecondsInMinute);
-        currentSecond = Mathf.FloorToInt(remainderMinutes % SecondsInMinute);
+        currentHour   = Mathf.FloorToInt(currentSecondsElapsed / (MinutesInHour * SecondsInMinute));
+        float remMins = currentSecondsElapsed % (MinutesInHour * SecondsInMinute);
+        currentMinute = Mathf.FloorToInt(remMins / SecondsInMinute);
+        currentSecond = Mathf.FloorToInt(remMins % SecondsInMinute);
     }
 
     private void AdvanceCalendarDay()
@@ -70,18 +104,5 @@ public class TimeManager : MonoBehaviour
                 currentYear++;
             }
         }
-    }
-
-    public string GetFormattedDate()
-    {
-        return $"{currentMonth:D2}/{currentDay:D2}/{currentYear}";
-    }
-
-    public string GetFormattedTime()
-    {
-        string period = currentHour >= 12 ? "PM" : "AM";
-        int hour12 = currentHour % 12;
-        if (hour12 == 0) hour12 = 12;
-        return $"{hour12}:{currentMinute:D2} {period}";
     }
 }

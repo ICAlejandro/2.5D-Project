@@ -6,21 +6,20 @@ public class DayNightCycle : MonoBehaviour
     [Range(0f, 1f)]
     public float currentTimeOfDay = 0f;
 
-    private TimeManager timeManager;
+    private ITimeProvider timeProvider;
 
     void Start()
     {
-        // Resolve from ServiceLocator instead of searching the scene
-        timeManager = ServiceLocator.Get<TimeManager>();
+        timeProvider = ServiceLocator.Get<ITimeProvider>();
 
-        if (timeManager == null)
-            Debug.LogError("DayNightCycle could not find a TimeManager via ServiceLocator!");
+        if (timeProvider == null)
+            Debug.LogError("DayNightCycle could not find an ITimeProvider via ServiceLocator!");
     }
 
     void Update()
     {
-        if (timeManager != null)
-            currentTimeOfDay = timeManager.currentTimeOfDay;
+        if (timeProvider != null)
+            currentTimeOfDay = timeProvider.CurrentTimeOfDay;
 
         // 0.0 = Midnight, 0.25 = Sunrise, 0.5 = Noon, 0.75 = Sunset
         float sunXRotation = currentTimeOfDay * 360f;

@@ -1,22 +1,35 @@
 using System;
 using UnityEngine;
 
-public class PlayerInventory : MonoBehaviour
+/// <summary>
+/// Concrete inventory implementation. Registers itself as IInventory
+/// so consumers never reference this class directly.
+/// </summary>
+public class PlayerInventory : MonoBehaviour, IInventory
 {
     [Header("Inventory Tracking")]
-    public int goldCount = 0;
-    public int seedCount = 3;
-    public int cropCount = 0;
-    public bool hasWater = true;
+    [SerializeField] private int  goldCount = 0;
+    [SerializeField] private int  seedCount = 3;
+    [SerializeField] private int  cropCount = 0;
+    [SerializeField] private bool hasWater  = true;
 
+    // ── IInventory properties ──────────────────────────────────────────────
+    public int  GoldCount => goldCount;
+    public int  SeedCount => seedCount;
+    public int  CropCount => cropCount;
+    public bool HasWater  => hasWater;
+
+    // ── IInventory event ───────────────────────────────────────────────────
     public event Action OnInventoryChanged;
 
+    // ── Unity Lifecycle ────────────────────────────────────────────────────
     void Awake()
     {
-        // Register so any script can find this instantly without a scene search
-        ServiceLocator.Register<PlayerInventory>(this);
+        // Register as the interface — consumers never need to know it's a PlayerInventory
+        ServiceLocator.Register<IInventory>(this);
     }
 
+    // ── IInventory mutators ────────────────────────────────────────────────
     public void AddCrop(int amount)
     {
         cropCount += amount;

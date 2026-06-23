@@ -3,9 +3,6 @@ using TMPro;
 
 public class PlayerHUD : MonoBehaviour
 {
-    [Header("Inventory Data Source")]
-    public PlayerInventory playerInventory;
-
     [Header("UI Text MeshPro References")]
     public TextMeshProUGUI goldText;
     public TextMeshProUGUI seedText;
@@ -16,49 +13,46 @@ public class PlayerHUD : MonoBehaviour
     public TextMeshProUGUI dateText;
     public TextMeshProUGUI timeText;
 
-    private TimeManager timeManager;
+    private IInventory    inventory;
+    private ITimeProvider timeProvider;
 
     void Start()
     {
-        // Resolve from ServiceLocator instead of searching the scene
-        if (playerInventory == null)
-            playerInventory = ServiceLocator.Get<PlayerInventory>();
+        inventory    = ServiceLocator.Get<IInventory>();
+        timeProvider = ServiceLocator.Get<ITimeProvider>();
 
-        timeManager = ServiceLocator.Get<TimeManager>();
-
-        if (playerInventory != null)
-            playerInventory.OnInventoryChanged += UpdateHUDVisuals;
+        if (inventory != null)
+            inventory.OnInventoryChanged += UpdateHUDVisuals;
 
         UpdateHUDVisuals();
     }
 
     void OnDestroy()
     {
-        if (playerInventory != null)
-            playerInventory.OnInventoryChanged -= UpdateHUDVisuals;
+        if (inventory != null)
+            inventory.OnInventoryChanged -= UpdateHUDVisuals;
     }
 
     void Update()
     {
-        // Time still needs to poll since it updates continuously every frame
         UpdateTimeDisplay();
     }
 
     public void UpdateHUDVisuals()
     {
-        if (playerInventory == null) return;
+        if (inventory == null) return;
 
-        if (goldText  != null) goldText.text  = "Gold: "      + playerInventory.goldCount;
-        if (seedText  != null) seedText.text  = "Seeds: "     + playerInventory.seedCount;
-        if (waterText != null) waterText.text = "Water Can: " + (playerInventory.hasWater ? "Full" : "Empty");
-        if (cropText  != null) cropText.text  = "Crops: "     + playerInventory.cropCount;
+        if (goldText  != null) goldText.text  = "Gold: "      + inventory.GoldCount;
+        if (seedText  != null) seedText.text  = "Seeds: "     + inventory.SeedCount;
+        if (waterText != null) waterText.text = "Water Can: " + (inventory.HasWater ? "Full" : "Empty");
+        if (cropText  != null) cropText.text  = "Crops: "     + inventory.CropCount;
     }
 
     private void UpdateTimeDisplay()
     {
-        if (timeManager == null) return;
+        if (timeProvider == null) return;
 
-        if (dateText != null) dateText.text = "Date: " + timeManager.GetFormattedDate();
-        if (timeText != null) timeText.text = "Time: " + timeManager.GetFormattedTime();
+        if (dateText != null) dateText.text = "Date: " + timeProvider.GetFormattedDate();
+        if (timeText != null) timeText.text = "Time: " + timeProvider.GetFormattedTime();
     }
 }

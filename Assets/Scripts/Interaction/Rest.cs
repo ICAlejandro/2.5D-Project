@@ -9,35 +9,34 @@ public class Rest : Interactable
     [Tooltip("Only used if Instant Skip is OFF — how many real seconds the fast-forward takes.")]
     public float fastForwardDuration = 2f;
 
-    private TimeManager timeManager;
-    private bool isFastForwarding = false;
+    private ITimeProvider timeProvider;
+    private bool  isFastForwarding = false;
     private float originalDayDuration;
 
     void Start()
     {
-        // Resolve from ServiceLocator instead of searching the scene
-        timeManager = ServiceLocator.Get<TimeManager>();
+        timeProvider = ServiceLocator.Get<ITimeProvider>();
 
-        if (timeManager == null)
-            Debug.LogError("Rest.cs could not find a TimeManager via ServiceLocator!");
+        if (timeProvider == null)
+            Debug.LogError("Rest.cs could not find an ITimeProvider via ServiceLocator!");
 
         dialogueText = "Press Enter to rest and skip to the next day.";
     }
 
     void Update()
     {
-        if (isFastForwarding && timeManager != null)
+        if (isFastForwarding && timeProvider != null)
         {
-            if (timeManager.currentTimeOfDay < 0.01f)
+            if (timeProvider.CurrentTimeOfDay < 0.01f)
                 StopFastForward();
         }
     }
 
     public override void Interact(GameObject playerObject)
     {
-        if (timeManager == null)
+        if (timeProvider == null)
         {
-            Debug.LogWarning("Rest: No TimeManager found, cannot skip day.");
+            Debug.LogWarning("Rest: No ITimeProvider found, cannot skip day.");
             return;
         }
 
@@ -49,26 +48,26 @@ public class Rest : Interactable
 
     private void SkipToNextDay()
     {
-        timeManager.currentTimeOfDay = 1f;
+        timeProvider.CurrentTimeOfDay = 1f;
         Debug.Log("Rested! Skipping to the next day.");
     }
 
     private void StartFastForward()
     {
-        isFastForwarding = true;
-        originalDayDuration = timeManager.dayDurationInSeconds;
+        isFastForwarding      = true;
+        originalDayDuration   = timeProvider.DayDurationInSeconds;
 
-        float remainingFraction = 1f - timeManager.currentTimeOfDay;
+        float remainingFraction = 1f - timeProvider.CurrentTimeOfDay;
         if (remainingFraction <= 0f) remainingFraction = 1f;
 
-        timeManager.dayDurationInSeconds = originalDayDuration * remainingFraction / fastForwardDuration;
+        timeProvider.DayDurationInSeconds = originalDayDuration * remainingFraction / fastForwardDuration;
         Debug.Log($"Rest: Fast-forwarding to next day over {fastForwardDuration} real second(s).");
     }
 
     private void StopFastForward()
     {
         isFastForwarding = false;
-        timeManager.dayDurationInSeconds = originalDayDuration;
+        timeProvider.DayDurationInSeconds = originalDayDuration;
         Debug.Log("Rest: Fast-forward complete. Day has changed, time restored to normal speed.");
     }
 }

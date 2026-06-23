@@ -25,7 +25,7 @@ public class Farming : Interactable
 
     private Material wetSoilMaterial;
     private float growthTimer = 0f;
-    private TimeManager timeManager;
+    private ITimeProvider timeProvider;
     private float lastTimeOfDay;
 
     void Start()
@@ -33,10 +33,9 @@ public class Farming : Interactable
         if (soilMeshRenderer != null)
             wetSoilMaterial = soilMeshRenderer.material;
 
-        // Resolve from ServiceLocator instead of searching the scene
-        timeManager = ServiceLocator.Get<TimeManager>();
-        if (timeManager != null)
-            lastTimeOfDay = timeManager.currentTimeOfDay;
+        timeProvider = ServiceLocator.Get<ITimeProvider>();
+        if (timeProvider != null)
+            lastTimeOfDay = timeProvider.CurrentTimeOfDay;
 
         RefreshAllVisualsAndDialogue();
     }
@@ -48,7 +47,7 @@ public class Farming : Interactable
 
     public override void Interact(GameObject playerObject)
     {
-        PlayerInventory inventory = playerObject.GetComponent<PlayerInventory>();
+        IInventory inventory   = playerObject.GetComponent<PlayerInventory>();
         PlayerAction playerAction = playerObject.GetComponent<PlayerAction>();
 
         if (inventory == null || playerAction == null) return;
@@ -72,10 +71,10 @@ public class Farming : Interactable
             else
             {
                 float progressPercent = (growthTimer / timeToGrow) * 100f;
-                float daysRemaining = Mathf.Max(0f, timeToGrow - growthTimer);
-                string statusReport = $"This {activeSeedName} plant is growing happily! " +
-                                      $"\nProgress: {progressPercent:F0}% filled. " +
-                                      $"\nEstimated time remaining: {daysRemaining:F1} in-game days.";
+                float daysRemaining   = Mathf.Max(0f, timeToGrow - growthTimer);
+                string statusReport   = $"This {activeSeedName} plant is growing happily! " +
+                                        $"\nProgress: {progressPercent:F0}% filled. " +
+                                        $"\nEstimated time remaining: {daysRemaining:F1} in-game days.";
                 playerAction.DisplayDialogue(statusReport);
             }
             return;
@@ -83,7 +82,7 @@ public class Farming : Interactable
 
         if (currentStage == GrowthStage.Empty)
         {
-            if (inventory.seedCount > 0)
+            if (inventory.SeedCount > 0)
             {
                 inventory.UseSeed();
                 activeSeedName = "Standard Seed";
@@ -101,13 +100,13 @@ public class Farming : Interactable
     {
         if (currentStage == GrowthStage.Growing && isWatered)
         {
-            if (timeManager != null)
+            if (timeProvider != null)
             {
-                float currentTime = timeManager.currentTimeOfDay;
-                float timeDelta = currentTime - lastTimeOfDay;
+                float currentTime = timeProvider.CurrentTimeOfDay;
+                float timeDelta   = currentTime - lastTimeOfDay;
                 if (timeDelta < 0) timeDelta += 1f;
-                growthTimer += timeDelta;
-                lastTimeOfDay = currentTime;
+                growthTimer   += timeDelta;
+                lastTimeOfDay  = currentTime;
             }
             else
             {
@@ -129,15 +128,15 @@ public class Farming : Interactable
     void PlantSeed()
     {
         growthTimer = 0f;
-        isWatered = false;
-        if (timeManager != null) lastTimeOfDay = timeManager.currentTimeOfDay;
+        isWatered   = false;
+        if (timeProvider != null) lastTimeOfDay = timeProvider.CurrentTimeOfDay;
         TransitionToStage(GrowthStage.Growing);
     }
 
     void WaterCrop()
     {
         isWatered = true;
-        if (timeManager != null) lastTimeOfDay = timeManager.currentTimeOfDay;
+        if (timeProvider != null) lastTimeOfDay = timeProvider.CurrentTimeOfDay;
         RefreshAllVisualsAndDialogue();
     }
 
