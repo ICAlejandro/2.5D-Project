@@ -6,14 +6,13 @@ public class PlayerAction : MonoBehaviour
 {
     [Header("Interaction Settings")]
     public float InteractionDistance = 4f;
+    
+    [Tooltip("Make sure either 'Interactable' or 'Interactables' is selected here!")]
     public LayerMask interactableLayer;
 
     [Header("3D BoxCast Dimensions")]
-    [Tooltip("How wide left-to-right (X axis) the interaction box is.")]
     public float boxWidth = 1f;
-    [Tooltip("How tall up-and-down (Y axis) the interaction box is.")]
     public float boxHeight = 3f;
-    [Tooltip("How thick forward-and-back (Z axis) the interaction box shape itself is.")]
     public float boxDepth = 1f;
 
     [Header("Master UI References")]
@@ -27,6 +26,17 @@ public class PlayerAction : MonoBehaviour
     {
         playerMovement = GetComponent<PlayerMovement>();
         if (masterDialogueCanvas != null) masterDialogueCanvas.SetActive(false);
+
+        // Fail-safe automatic backup check for the 'Interactables' layer naming
+        if (interactableLayer == 0)
+        {
+            int defaultLayerIndex = LayerMask.NameToLayer("Interactables");
+            if (defaultLayerIndex != -1)
+            {
+                interactableLayer = 1 << defaultLayerIndex;
+                Debug.Log("PlayerAction automatically targeted the 'Interactables' physics layer mask.");
+            }
+        }
     }
 
     void Update()
@@ -48,49 +58,40 @@ public class PlayerAction : MonoBehaviour
 
     void TryInteract()
     {
-        RaycastHit hit;
         Vector3 lookDirection = playerMovement != null ? playerMovement.GetLookDirection() : transform.forward;
-        
         lookDirection.y = 0f;
         lookDirection.Normalize();
 
-        Vector3 boxHalfExtents = new Vector3(boxWidth / 2f, boxHeight / 2f, boxDepth / 2f);
+        Vector3 boxSize = new Vector3(boxWidth, boxHeight, boxDepth);
+        RaycastHit hit;
 
-        if (Physics.BoxCast(transform.position, boxHalfExtents, lookDirection, out hit, transform.rotation, InteractionDistance, interactableLayer))
+        // Perform the BoxCast scan
+        if (Physics.BoxCast(transform.position, boxSize / 2f, lookDirection, out hit, Quaternion.identity, InteractionDistance, interactableLayer))
         {
-            float distanceToTarget = hit.distance;
+            Debug.Log($"BoxCast successfully hit: {hit.collider.gameObject.name}");
 
-            OnlineShop onlineShopComponent = hit.collider.GetComponent<OnlineShop>();
-            if (onlineShopComponent != null && distanceToTarget <= InteractionDistance)
+            // Look for the bridge component
+            Interactable targetInteractable = hit.collider.GetComponent<Interactable>();
+            if (targetInteractable != null)
             {
-                onlineShopComponent.OpenShop(gameObject);
-                return; 
-            }
-
-            DeliveryPackage deliveryPackage = hit.collider.GetComponent<DeliveryPackage>();
-            if (deliveryPackage != null && distanceToTarget <= InteractionDistance)
-            {
-                deliveryPackage.Interact(gameObject);
-                return;
-            }
-
-            Farming farmingPot = hit.collider.GetComponent<Farming>();
-            if (farmingPot != null && distanceToTarget <= InteractionDistance)
-            {
-                farmingPot.Interact(gameObject);
-                return;
-            }
-
-            Interactable textData = hit.collider.GetComponent<Interactable>();
-            if (textData != null && distanceToTarget <= InteractionDistance)
-            {
-                if (masterDialogueCanvas == null || UI_TextMesh == null) return;
-
-                UI_TextMesh.text = textData.dialogueText;
-                masterDialogueCanvas.SetActive(true);
-                isDialogueOpen = true;
+                // Execute the interaction bridge without caring what script type it actually is!
+                targetInteractable.Interact(gameObject);
             }
         }
+        else
+        {
+            Debug.LogWarning("BoxCast did not hit any objects on the specified Interactable Layer Mask.");
+        }
+    }
+
+    // Public method that the base Interactable bridge can call to display text
+    public void DisplayDialogue(string text)
+    {
+        if (masterDialogueCanvas == null || UI_TextMesh == null) return;
+
+        UI_TextMesh.text = text;
+        masterDialogueCanvas.SetActive(true);
+        isDialogueOpen = true;
     }
 
     void CloseDialogue()

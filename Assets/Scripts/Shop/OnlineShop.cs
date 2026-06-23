@@ -2,20 +2,15 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class OnlineShop : MonoBehaviour
+public class OnlineShop : Interactable
 {
     [Header("Shop Balancing")]
     public int seedCost = 5;
     public int cropValue = 10;
 
     [Header("Delivery Settings")]
-    [Tooltip("How many seconds it takes for the package to arrive.")]
     [SerializeField] private float deliveryTimeSeconds = 3f;
-    
-    [Tooltip("Drop your 3D furniture_package prefab here.")]
     [SerializeField] private GameObject packagePrefab;
-    
-    [Tooltip("Where the packages will spawn and clip together.")]
     [SerializeField] private Transform deliverySpawnPoint;
 
     [Header("UI Panel Reference")]
@@ -31,29 +26,23 @@ public class OnlineShop : MonoBehaviour
 
     void Start()
     {
-        if (shopCanvas != null)
-        {
-            shopCanvas.SetActive(false);
-        }
+        if (shopCanvas != null) shopCanvas.SetActive(false);
 
         if (buySeedButton != null) buySeedButton.onClick.AddListener(BuySeed);
         if (sellCropButton != null) sellCropButton.onClick.AddListener(SellCrop);
         if (closeButton != null) closeButton.onClick.AddListener(CloseShop);
         
         playerHUD = FindFirstObjectByType<PlayerHUD>();
+        activePlayerInventory = FindFirstObjectByType<PlayerInventory>();
     }
 
-    public void OpenShop(GameObject player)
+    public override void Interact(GameObject player)
     {
-        activePlayerInventory = player.GetComponent<PlayerInventory>();
-        
-        if (activePlayerInventory != null && shopCanvas != null)
+        if (shopCanvas != null)
         {
             shopCanvas.SetActive(true);
-            
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-
             Time.timeScale = 0f; 
         }
     }
@@ -65,11 +54,14 @@ public class OnlineShop : MonoBehaviour
         if (activePlayerInventory.goldCount >= seedCost)
         {
             activePlayerInventory.goldCount -= seedCost;
-            Debug.Log("Order placed! Shipping 1 seed...");
-
             if (playerHUD != null) playerHUD.UpdateHUDVisuals();
 
             StartCoroutine(ProcessDeliveryRoutine(1));
+            Debug.Log("Ordered 1 seed via Online Shop!");
+        }
+        else
+        {
+            Debug.Log("Not enough gold to buy a seed!");
         }
     }
 
@@ -79,15 +71,20 @@ public class OnlineShop : MonoBehaviour
 
         if (packagePrefab != null && deliverySpawnPoint != null)
         {
-            // Spawn the package exactly at the spawn point position so they clip together
             GameObject spawnedPackage = Instantiate(packagePrefab, deliverySpawnPoint.position, deliverySpawnPoint.rotation);
-            Debug.Log("A package has arrived and clipped into the delivery point.");
+            Debug.Log("A package has arrived at the delivery point.");
 
-            // Inject the order details
-            DeliveryPackage packageScript = spawnedPackage.GetComponent<DeliveryPackage>();
-            if (packageScript != null)
+            Delivery deliveryScript = spawnedPackage.GetComponent<Delivery>();
+            if (deliveryScript != null)
             {
-                packageScript.seedCountInside = amountOrdered;
+                deliveryScript.seedCountInside = amountOrdered;
+            }
+
+            // Tell the spawn point blocker to check for packages and update physics state
+            DeliveryZoneBlocker blocker = deliverySpawnPoint.GetComponent<DeliveryZoneBlocker>();
+            if (blocker != null)
+            {
+                blocker.EvaluateBlockerState();
             }
         }
     }
@@ -100,22 +97,16 @@ public class OnlineShop : MonoBehaviour
         {
             activePlayerInventory.cropCount--;
             activePlayerInventory.goldCount += cropValue;
-            Debug.Log("Sold 1 crop via Online Shop!");
-
             if (playerHUD != null) playerHUD.UpdateHUDVisuals();
+            Debug.Log("Sold 1 crop via Online Shop!");
         }
     }
 
     public void CloseShop()
     {
-        if (shopCanvas != null)
-        {
-            shopCanvas.SetActive(false);
-        }
-
+        if (shopCanvas != null) shopCanvas.SetActive(false);
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-
-        Time.timeScale = 1f; 
+        Time.timeScale = 1f;
     }
 }

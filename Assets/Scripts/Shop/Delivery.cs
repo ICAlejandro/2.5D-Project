@@ -1,20 +1,11 @@
 using UnityEngine;
 
-public class DeliveryPackage : MonoBehaviour
+public class Delivery : Interactable
 {
     [Header("Package Contents")]
     public int seedCountInside = 1;
 
-    [Header("Spinning Visuals")]
-    [Tooltip("Degrees per second the package rotates around its vertical Y axis.")]
-    [SerializeField] private float rotationSpeed = 45f;
-
-    void Update()
-    {
-        transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
-    }
-
-    public void Interact(GameObject playerObject)
+    public override void Interact(GameObject playerObject)
     {
         PlayerInventory inventory = playerObject.GetComponent<PlayerInventory>();
         
@@ -29,7 +20,16 @@ public class DeliveryPackage : MonoBehaviour
                 hud.UpdateHUDVisuals();
             }
 
+            // Find the zone blocker script before destroying this package object instance
+            DeliveryZoneBlocker blocker = FindFirstObjectByType<DeliveryZoneBlocker>();
+
             Destroy(gameObject);
+
+            // Let the engine clear out this object asset completely, then update the wall collision 
+            if (blocker != null)
+            {
+                blocker.Invoke("EvaluateBlockerState", 0.05f);
+            }
         }
     }
 }

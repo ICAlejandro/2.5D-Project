@@ -13,7 +13,6 @@ public class PlayerHUD : MonoBehaviour
     public TextMeshProUGUI cropText; 
 
     [Header("Time Display Settings")]
-    [Tooltip("Assign TextMeshPro elements to display the calendar date and clock time.")]
     public TextMeshProUGUI dateText;
     public TextMeshProUGUI timeText;
 
@@ -26,9 +25,7 @@ public class PlayerHUD : MonoBehaviour
             playerInventory = FindFirstObjectByType<PlayerInventory>();
         }
 
-        // Cache the master calendar reference
         timeManager = FindFirstObjectByType<TimeManager>();
-
         UpdateHUDVisuals();
     }
 
@@ -39,42 +36,18 @@ public class PlayerHUD : MonoBehaviour
 
     public void UpdateHUDVisuals()
     {
-        // 1. Process Inventory Display Values
         if (playerInventory != null)
         {
-            if (goldText != null)
-            {
-                goldText.text = "Gold: " + playerInventory.goldCount;
-            }
-
-            if (seedText != null)
-            {
-                seedText.text = "Seeds: " + playerInventory.seedCount;
-            }
-
-            if (waterText != null)
-            {
-                waterText.text = "Water Can: " + (playerInventory.hasWater ? "Full" : "Empty");
-            }
-
-            if (cropText != null)
-            {
-                cropText.text = "Crops: " + playerInventory.cropCount;
-            }
+            if (goldText != null) goldText.text = "Gold: " + playerInventory.goldCount;
+            if (seedText != null) seedText.text = "Seeds: " + playerInventory.seedCount;
+            if (waterText != null) waterText.text = "Water Can: " + (playerInventory.hasWater ? "Full" : "Empty");
+            if (cropText != null) cropText.text = "Crops: " + playerInventory.cropCount;
         }
 
-        // 2. Process Calendar & Time Display Values
         if (timeManager != null)
         {
-            if (dateText != null)
-            {
-                dateText.text = "Date: " + timeManager.GetFormattedDate();
-            }
-
-            if (timeText != null)
-            {
-                timeText.text = "Time: " + timeManager.GetFormattedTime();
-            }
+            if (dateText != null) dateText.text = "Date: " + timeManager.GetFormattedDate();
+            if (timeText != null) timeText.text = "Time: " + timeManager.GetFormattedTime();
         }
     }
 }

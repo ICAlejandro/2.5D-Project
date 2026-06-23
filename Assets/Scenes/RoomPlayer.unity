@@ -445,6 +445,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 201465787}
+  - component: {fileID: 201465789}
+  - component: {fileID: 201465788}
   m_Layer: 0
   m_Name: DeliverySpawnPoint
   m_TagString: Untagged
@@ -467,6 +469,39 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1951267459}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &201465788
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 201465786}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 3, y: 3, z: 3}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &201465789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 201465786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f04859091f0962141969aad6bcf4831c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DeliveryZoneBlocker
 --- !u!1 &223575032 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -3196511607817033700, guid: cdc41fc02b3ebd5478a55ec9b375c2ca, type: 3}
@@ -4973,6 +5008,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6f8500d283a5c9343ad93495804bd559, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1776229853}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6f8500d283a5c9343ad93495804bd559, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1776229854}
     - targetCorrespondingSourceObject: {fileID: -890725610732284099, guid: 6f8500d283a5c9343ad93495804bd559, type: 3}
       insertIndex: -1
       addedObject: {fileID: 136464735}
@@ -5153,6 +5191,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b59f8358f61c1044291c1b8ac0854f90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OnlineShop
+  dialogueText: This is a placeholder interaction text.
   seedCost: 5
   cropValue: 10
   deliveryTimeSeconds: 5
@@ -5162,6 +5201,19 @@ MonoBehaviour:
   buySeedButton: {fileID: 1300549662}
   sellCropButton: {fileID: 517521287}
   closeButton: {fileID: 1192635552}
+--- !u!114 &1776229854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1776229847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40cfd6806b3a53d4596ac853a0dedf5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Interactable
+  dialogueText: Hello! I am a simple interactable object.
 --- !u!1 &1812674896
 GameObject:
   m_ObjectHideFlags: 0
@@ -5497,7 +5549,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.27, y: 0.38, z: 0.1}
+  m_Size: {x: 0.35, y: 0.38, z: 0.35}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &1880889713
 Rigidbody:
@@ -5538,11 +5590,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0be031c04a75b946847d5eea15aa53f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAction
-  InteractionDistance: 1.5
+  InteractionDistance: 2
   interactableLayer:
     serializedVersion: 2
     m_Bits: 8
-  boxWidth: 3
+  boxWidth: 4
   boxHeight: 5
   boxDepth: 4
   masterDialogueCanvas: {fileID: 483867971}
