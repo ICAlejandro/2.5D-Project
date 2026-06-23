@@ -21,7 +21,7 @@ public class OnlineShop : Interactable
 
     void Start()
     {
-        activePlayerInventory = FindFirstObjectByType<PlayerInventory>();
+        activePlayerInventory = ServiceLocator.Get<PlayerInventory>();
         shopUI = GetComponent<ShopUI>();
     }
 
@@ -36,7 +36,7 @@ public class OnlineShop : Interactable
 
         if (activePlayerInventory.goldCount >= seedCost)
         {
-            activePlayerInventory.goldCount -= seedCost;
+            activePlayerInventory.SpendGold(seedCost);
             StartCoroutine(ProcessDeliveryRoutine(1));
             Debug.Log("Ordered 1 seed via Online Shop!");
         }

@@ -15,28 +15,21 @@ public class Rest : Interactable
 
     void Start()
     {
-        timeManager = FindFirstObjectByType<TimeManager>();
+        // Resolve from ServiceLocator instead of searching the scene
+        timeManager = ServiceLocator.Get<TimeManager>();
 
         if (timeManager == null)
-        {
-            Debug.LogError("Rest.cs could not find a TimeManager in the scene!");
-        }
+            Debug.LogError("Rest.cs could not find a TimeManager via ServiceLocator!");
 
-        // Set the default dialogue text shown when the player walks up
         dialogueText = "Press Enter to rest and skip to the next day.";
     }
 
     void Update()
     {
-        // If we're fast-forwarding, check if the day has rolled over yet
         if (isFastForwarding && timeManager != null)
         {
-            // TimeManager's AdvanceCalendarDay is called internally when currentTimeOfDay resets to 0.
-            // We detect the rollover by checking if the time wrapped back near 0.
             if (timeManager.currentTimeOfDay < 0.01f)
-            {
                 StopFastForward();
-            }
         }
     }
 
@@ -48,50 +41,34 @@ public class Rest : Interactable
             return;
         }
 
-        if (isFastForwarding) return; // Don't stack interactions
+        if (isFastForwarding) return;
 
-        if (instantSkip)
-        {
-            SkipToNextDay();
-        }
-        else
-        {
-            StartFastForward();
-        }
+        if (instantSkip) SkipToNextDay();
+        else             StartFastForward();
     }
 
-    // Instantly jumps to the start of the next day
     private void SkipToNextDay()
     {
-        // Setting currentTimeOfDay to 1f will cause TimeManager.CalculateInGameClock()
-        // to fire AdvanceCalendarDay() on its very next Update tick, then reset to 0.
-        // This means no calendar logic is duplicated here — TimeManager handles it cleanly.
         timeManager.currentTimeOfDay = 1f;
-
         Debug.Log("Rested! Skipping to the next day.");
     }
 
-    // Speeds up time so the day rolls over faster (visible fast-forward effect)
     private void StartFastForward()
     {
         isFastForwarding = true;
         originalDayDuration = timeManager.dayDurationInSeconds;
 
-        // Shrink the remaining time into the fastForwardDuration window
         float remainingFraction = 1f - timeManager.currentTimeOfDay;
         if (remainingFraction <= 0f) remainingFraction = 1f;
 
-        // Temporarily set dayDuration so the remaining time passes in fastForwardDuration seconds
         timeManager.dayDurationInSeconds = originalDayDuration * remainingFraction / fastForwardDuration;
-
         Debug.Log($"Rest: Fast-forwarding to next day over {fastForwardDuration} real second(s).");
     }
 
-    // Called when the fast-forward completes (day rolled over)
     private void StopFastForward()
     {
         isFastForwarding = false;
-        timeManager.dayDurationInSeconds = originalDayDuration; // Restore normal speed
+        timeManager.dayDurationInSeconds = originalDayDuration;
         Debug.Log("Rest: Fast-forward complete. Day has changed, time restored to normal speed.");
     }
 }

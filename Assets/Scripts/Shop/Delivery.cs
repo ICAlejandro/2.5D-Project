@@ -8,28 +8,20 @@ public class Delivery : Interactable
     public override void Interact(GameObject playerObject)
     {
         PlayerInventory inventory = playerObject.GetComponent<PlayerInventory>();
-        
+
         if (inventory != null)
         {
+            // AddSeeds fires OnInventoryChanged so the HUD updates automatically
             inventory.AddSeeds(seedCountInside);
             Debug.Log($"Collected package! Added {seedCountInside} seed(s) to inventory.");
 
-            PlayerHUD hud = FindFirstObjectByType<PlayerHUD>();
-            if (hud != null)
-            {
-                hud.UpdateHUDVisuals();
-            }
-
-            // Find the zone blocker script before destroying this package object instance
+            // Resolve from ServiceLocator instead of searching the scene
             DeliveryZoneBlocker blocker = FindFirstObjectByType<DeliveryZoneBlocker>();
 
             Destroy(gameObject);
 
-            // Let the engine clear out this object asset completely, then update the wall collision 
             if (blocker != null)
-            {
                 blocker.Invoke("EvaluateBlockerState", 0.05f);
-            }
         }
     }
 }

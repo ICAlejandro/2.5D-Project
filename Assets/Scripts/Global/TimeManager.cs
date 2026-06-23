@@ -21,8 +21,14 @@ public class TimeManager : MonoBehaviour
     private const int HoursInDay = 24;
     private const int MinutesInHour = 60;
     private const int SecondsInMinute = 60;
-    private const int DaysInMonth = 30; 
+    private const int DaysInMonth = 30;
     private const int MonthsInYear = 12;
+
+    void Awake()
+    {
+        // Register so any script can find this instantly without a scene search
+        ServiceLocator.Register<TimeManager>(this);
+    }
 
     void Update()
     {
@@ -31,20 +37,16 @@ public class TimeManager : MonoBehaviour
 
     private void CalculateInGameClock()
     {
-        // Force a absolute safety check: if dayDuration is set to 0 by accident, stop crash
         if (dayDurationInSeconds <= 0) dayDurationInSeconds = 1f;
 
-        // 1. Advance time purely based on real-world seconds passed divided by your target duration
         currentTimeOfDay += Time.deltaTime / dayDurationInSeconds;
 
-        // 2. Exact boundary check for day rollover
         if (currentTimeOfDay >= 1f)
         {
-            currentTimeOfDay = 0f; // Reset exactly to 0 to prevent drift acceleration
+            currentTimeOfDay = 0f;
             AdvanceCalendarDay();
         }
 
-        // 3. Translate the fractional value into stable digital metrics
         float totalSecondsInDay = HoursInDay * MinutesInHour * SecondsInMinute;
         float currentSecondsElapsed = currentTimeOfDay * totalSecondsInDay;
 
@@ -62,7 +64,6 @@ public class TimeManager : MonoBehaviour
         {
             currentDay = 1;
             currentMonth++;
-
             if (currentMonth > MonthsInYear)
             {
                 currentMonth = 1;
@@ -80,7 +81,7 @@ public class TimeManager : MonoBehaviour
     {
         string period = currentHour >= 12 ? "PM" : "AM";
         int hour12 = currentHour % 12;
-        if (hour12 == 0) hour12 = 12; // Midnight (0) and Noon (12) both display as 12
+        if (hour12 == 0) hour12 = 12;
         return $"{hour12}:{currentMinute:D2} {period}";
     }
 }
