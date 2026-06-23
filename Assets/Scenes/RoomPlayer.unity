@@ -2320,7 +2320,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d51081ab7964bc44ad8cc82416674c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHUD
-  playerInventory: {fileID: 1880889715}
   goldText: {fileID: 1456032800}
   seedText: {fileID: 1522095028}
   waterText: {fileID: 78630076}
@@ -4859,10 +4858,6 @@ MonoBehaviour:
   deliveryTimeSeconds: 5
   packagePrefab: {fileID: 4489365907213157896, guid: dff0f44e1c4694c46bbe60ba62d2c667, type: 3}
   deliverySpawnPoint: {fileID: 201465787}
-  shopCanvas: {fileID: 1105938041}
-  buySeedButton: {fileID: 1300549662}
-  sellCropButton: {fileID: 517521287}
-  closeButton: {fileID: 1198089131}
 --- !u!114 &1776229854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4872,10 +4867,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1776229847}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40cfd6806b3a53d4596ac853a0dedf5a, type: 3}
+  m_Script: {fileID: 11500000, guid: bc711ffe962a10341b8fdfeda20b8547, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Interactable
-  dialogueText: Hello! I am a simple interactable object.
+  m_EditorClassIdentifier: Assembly-CSharp::ShopUI
+  shopCanvas: {fileID: 1105938041}
+  buySeedButton: {fileID: 1300549662}
+  sellCropButton: {fileID: 517521287}
+  closeButton: {fileID: 1198089131}
 --- !u!1 &1812674896
 GameObject:
   m_ObjectHideFlags: 0
