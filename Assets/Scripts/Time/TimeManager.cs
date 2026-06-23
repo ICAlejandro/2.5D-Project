@@ -78,6 +78,9 @@ public class TimeManager : MonoBehaviour
 
     public string GetFormattedTime()
     {
-        return $"{currentHour:D2}:{currentMinute:D2}";
+        string period = currentHour >= 12 ? "PM" : "AM";
+        int hour12 = currentHour % 12;
+        if (hour12 == 0) hour12 = 12; // Midnight (0) and Noon (12) both display as 12
+        return $"{hour12}:{currentMinute:D2} {period}";
     }
 }
