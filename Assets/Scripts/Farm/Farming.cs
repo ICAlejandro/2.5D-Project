@@ -6,8 +6,8 @@ public class Farming : MonoBehaviour
 
     [Header("Growth Settings")]
     public GrowthStage currentStage = GrowthStage.Empty;
-    public float timeToGrow = 5.0f;
-    public int cropYieldAmount = 1; // Gives 1 physical crop item when harvested
+    public float timeToGrow = 1.0f; 
+    public int cropYieldAmount = 1; 
     public bool isWatered = false;
 
     [Header("2D Visual References")]
@@ -23,7 +23,24 @@ public class Farming : MonoBehaviour
     private Interactable interactableComponent;
     private float growthTimer = 0f;
 
+    private TimeManager timeManager;
+    private float lastTimeOfDay;
+
+    #region Unity Lifecycle
     void Start()
+    {
+        InitializeComponents();
+        RefreshAllVisualsAndDialogue();
+    }
+
+    void Update()
+    {
+        HandleGrowthSimulation();
+    }
+    #endregion
+
+    #region Initialization
+    private void InitializeComponents()
     {
         interactableComponent = GetComponent<Interactable>();
         
@@ -32,32 +49,52 @@ public class Farming : MonoBehaviour
             wetSoilMaterial = soilMeshRenderer.material;
         }
 
-        UpdateStatusAndDialogue();
-        UpdateAnimatorState();
-        UpdateSoilVisual();
-        
-        if (plantSpriteRenderer != null && currentStage == GrowthStage.Empty)
+        timeManager = FindFirstObjectByType<TimeManager>();
+        if (timeManager != null)
         {
-            plantSpriteRenderer.gameObject.SetActive(false);
+            lastTimeOfDay = timeManager.currentTimeOfDay;
         }
     }
+    #endregion
 
-    void Update()
+    #region Core Simulation Logic
+    private void HandleGrowthSimulation()
     {
         if (currentStage == GrowthStage.Growing && isWatered)
         {
-            growthTimer += Time.deltaTime;
+            if (timeManager != null)
+            {
+                float currentTime = timeManager.currentTimeOfDay;
+                float timeDelta = currentTime - lastTimeOfDay;
+
+                if (timeDelta < 0)
+                {
+                    timeDelta += 1f;
+                }
+
+                growthTimer += timeDelta;
+                lastTimeOfDay = currentTime;
+            }
+            else
+            {
+                growthTimer += Time.deltaTime / 60f; 
+            }
 
             if (growthTimer >= timeToGrow)
             {
-                currentStage = GrowthStage.ReadyToHarvest;
-                UpdateSoilVisual();
-                UpdateStatusAndDialogue();
-                UpdateAnimatorState();
+                TransitionToStage(GrowthStage.ReadyToHarvest);
             }
         }
     }
 
+    private void TransitionToStage(GrowthStage nextStage)
+    {
+        currentStage = nextStage;
+        RefreshAllVisualsAndDialogue();
+    }
+    #endregion
+
+    #region Interaction Handling
     public void Interact(GameObject playerObject)
     {
         PlayerInventory inventory = playerObject.GetComponent<PlayerInventory>();
@@ -66,53 +103,70 @@ public class Farming : MonoBehaviour
         switch (currentStage)
         {
             case GrowthStage.Empty:
-                if (inventory.seedCount > 0)
-                {
-                    inventory.UseSeed();
-                    PlantSeed();
-                }
-                else
-                {
-                    if (interactableComponent != null)
-                    {
-                        interactableComponent.dialogueText = "You don't have any seeds! Go find some.";
-                    }
-                }
+                HandlePlantingAttempt(inventory);
                 break;
 
             case GrowthStage.Growing:
-                if (!isWatered)
-                {
-                    WaterCrop();
-                }
+                HandleWateringAttempt();
                 break;
 
             case GrowthStage.ReadyToHarvest:
-                HarvestPlant(playerObject);
+                HandleHarvestAttempt(playerObject, inventory);
                 break;
         }
     }
 
+    private void HandlePlantingAttempt(PlayerInventory inventory)
+    {
+        if (inventory.seedCount > 0)
+        {
+            inventory.UseSeed();
+            PlantSeed();
+        }
+        else
+        {
+            UpdateDialogueText("You don't have any seeds! Go find some.");
+        }
+    }
+
+    private void HandleWateringAttempt()
+    {
+        if (!isWatered)
+        {
+            WaterCrop();
+        }
+    }
+
+    private void HandleHarvestAttempt(GameObject playerObject, PlayerInventory inventory)
+    {
+        HarvestPlant(playerObject);
+        UpdateDialogueText("Harvested! Crops in Bag: " + inventory.cropCount);
+    }
+    #endregion
+
+    #region Action Implementations
     void PlantSeed()
     {
-        currentStage = GrowthStage.Growing;
         growthTimer = 0f;
         isWatered = false; 
 
-        if (plantSpriteRenderer != null)
+        if (timeManager != null)
         {
-            plantSpriteRenderer.gameObject.SetActive(true);
-            plantSpriteRenderer.sprite = plantSampleSprite;
+            lastTimeOfDay = timeManager.currentTimeOfDay;
         }
 
-        UpdateSoilVisual();
-        UpdateStatusAndDialogue();
-        UpdateAnimatorState();
+        TransitionToStage(GrowthStage.Growing);
     }
 
     void WaterCrop()
     {
         isWatered = true;
+        
+        if (timeManager != null)
+        {
+            lastTimeOfDay = timeManager.currentTimeOfDay;
+        }
+
         UpdateSoilVisual();
         UpdateStatusAndDialogue();
         Debug.Log("Crop watered! It is now growing.");
@@ -120,35 +174,40 @@ public class Farming : MonoBehaviour
 
     void HarvestPlant(GameObject playerObject)
     {
-        currentStage = GrowthStage.Empty;
         isWatered = false; 
-
-        if (plantSpriteRenderer != null)
-        {
-            plantSpriteRenderer.gameObject.SetActive(false);
-        }
 
         if (playerObject != null)
         {
             PlayerInventory inventory = playerObject.GetComponent<PlayerInventory>();
             if (inventory != null)
             {
-                // Give the player physical crops instead of gold!
                 inventory.AddCrop(cropYieldAmount);
             }
         }
 
-        UpdateSoilVisual(); 
+        TransitionToStage(GrowthStage.Empty);
+    }
+    #endregion
+
+    #region Visual & UI Updates
+    private void RefreshAllVisualsAndDialogue()
+    {
+        UpdatePlantVisibility();
+        UpdateSoilVisual();
         UpdateStatusAndDialogue();
         UpdateAnimatorState();
-        
-        if (interactableComponent != null && playerObject != null)
+    }
+
+    private void UpdatePlantVisibility()
+    {
+        if (plantSpriteRenderer == null) return;
+
+        bool shouldBeVisible = (currentStage != GrowthStage.Empty);
+        plantSpriteRenderer.gameObject.SetActive(shouldBeVisible);
+
+        if (shouldBeVisible)
         {
-            PlayerInventory inventory = playerObject.GetComponent<PlayerInventory>();
-            if (inventory != null)
-            {
-                interactableComponent.dialogueText = "Harvested! Crops in Bag: " + inventory.cropCount;
-            }
+            plantSpriteRenderer.sprite = plantSampleSprite;
         }
     }
 
@@ -173,20 +232,15 @@ public class Farming : MonoBehaviour
         switch (currentStage)
         {
             case GrowthStage.Empty:
-                interactableComponent.dialogueText = "This pot is ready for seeds! Press Enter to plant.";
+                UpdateDialogueText("This pot is ready for seeds! Press Enter to plant.");
                 break;
             case GrowthStage.Growing:
-                if (!isWatered)
-                {
-                    interactableComponent.dialogueText = "The seed needs water! Press Enter to water it.";
-                }
-                else
-                {
-                    interactableComponent.dialogueText = "The plant is growing happily... Check back soon.";
-                }
+                UpdateDialogueText(isWatered 
+                    ? "The plant is growing happily... Check back soon." 
+                    : "The seed needs water! Press Enter to water it.");
                 break;
             case GrowthStage.ReadyToHarvest:
-                interactableComponent.dialogueText = "The crop is fully grown! Press Enter to harvest.";
+                UpdateDialogueText("The crop is fully grown! Press Enter to harvest.");
                 break;
         }
     }
@@ -194,7 +248,15 @@ public class Farming : MonoBehaviour
     void UpdateAnimatorState()
     {
         if (plantAnimator == null) return;
-
         plantAnimator.SetInteger("GrowthStage", (int)currentStage);
     }
+
+    private void UpdateDialogueText(string text)
+    {
+        if (interactableComponent != null)
+        {
+            interactableComponent.dialogueText = text;
+        }
+    }
+    #endregion
 }

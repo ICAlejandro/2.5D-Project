@@ -12,12 +12,23 @@ public class PlayerHUD : MonoBehaviour
     public TextMeshProUGUI waterText;
     public TextMeshProUGUI cropText; 
 
+    [Header("Time Display Settings")]
+    [Tooltip("Assign TextMeshPro elements to display the calendar date and clock time.")]
+    public TextMeshProUGUI dateText;
+    public TextMeshProUGUI timeText;
+
+    private TimeManager timeManager;
+
     void Start()
     {
         if (playerInventory == null)
         {
             playerInventory = FindFirstObjectByType<PlayerInventory>();
         }
+
+        // Cache the master calendar reference
+        timeManager = FindFirstObjectByType<TimeManager>();
+
         UpdateHUDVisuals();
     }
 
@@ -28,26 +39,42 @@ public class PlayerHUD : MonoBehaviour
 
     public void UpdateHUDVisuals()
     {
-        if (playerInventory == null) return;
-
-        if (goldText != null)
+        // 1. Process Inventory Display Values
+        if (playerInventory != null)
         {
-            goldText.text = "Gold: " + playerInventory.goldCount;
+            if (goldText != null)
+            {
+                goldText.text = "Gold: " + playerInventory.goldCount;
+            }
+
+            if (seedText != null)
+            {
+                seedText.text = "Seeds: " + playerInventory.seedCount;
+            }
+
+            if (waterText != null)
+            {
+                waterText.text = "Water Can: " + (playerInventory.hasWater ? "Full" : "Empty");
+            }
+
+            if (cropText != null)
+            {
+                cropText.text = "Crops: " + playerInventory.cropCount;
+            }
         }
 
-        if (seedText != null)
+        // 2. Process Calendar & Time Display Values
+        if (timeManager != null)
         {
-            seedText.text = "Seeds: " + playerInventory.seedCount;
-        }
+            if (dateText != null)
+            {
+                dateText.text = "Date: " + timeManager.GetFormattedDate();
+            }
 
-        if (waterText != null)
-        {
-            waterText.text = "Water Can: " + (playerInventory.hasWater ? "Full" : "Empty");
-        }
-
-        if (cropText != null)
-        {
-            cropText.text = "Crops: " + playerInventory.cropCount;
+            if (timeText != null)
+            {
+                timeText.text = "Time: " + timeManager.GetFormattedTime();
+            }
         }
     }
 }
