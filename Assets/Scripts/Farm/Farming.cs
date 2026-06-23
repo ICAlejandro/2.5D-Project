@@ -6,13 +6,17 @@ public class Farming : Interactable
 
     [Header("Growth Settings")]
     public GrowthStage currentStage = GrowthStage.Empty;
-    public float timeToGrow = 1.0f; 
+    public float timeToGrow = 1.0f; // In fractional days (e.g., 1.0 = 1 full in-game day)
     public int cropYieldAmount = 1; 
     public bool isWatered = false;
 
-    [Header("2D Visual References")]
+    [Header("Current Seed Data")]
+    [Tooltip("Tracks what seed type is currently planted here.")]
+    public string activeSeedName = "";
+
+    [Header("Visual Component Links")]
     public SpriteRenderer plantSpriteRenderer;
-    public Sprite plantSampleSprite;
+    public Sprite plantSampleSprite; // Replace or expand for multi-seed visuals later
     public Animator plantAnimator;
     
     [Header("3D Soil Visuals")]
@@ -21,7 +25,6 @@ public class Farming : Interactable
     
     private Material wetSoilMaterial; 
     private float growthTimer = 0f;
-
     private TimeManager timeManager;
     private float lastTimeOfDay;
 
@@ -46,29 +49,69 @@ public class Farming : Interactable
         HandleGrowthSimulation();
     }
 
+    // Overridden bridge execution method triggered by PlayerAction.cs
     public override void Interact(GameObject playerObject)
     {
         PlayerInventory inventory = playerObject.GetComponent<PlayerInventory>();
-        if (inventory == null) return;
+        PlayerAction playerAction = playerObject.GetComponent<PlayerAction>();
+        
+        if (inventory == null || playerAction == null) return;
 
-        switch (currentStage)
+        // STEP 1: If the plant is fully grown, harvest it immediately
+        if (currentStage == GrowthStage.ReadyToHarvest)
         {
-            case GrowthStage.Empty:
-                if (inventory.seedCount > 0)
-                {
-                    inventory.UseSeed();
-                    PlantSeed();
-                }
-                break;
+            inventory.AddCrop(cropYieldAmount);
+            Debug.Log($"Harvested {cropYieldAmount} {activeSeedName} crop(s)!");
+            
+            // Reset pot back to an empty slate
+            activeSeedName = "";
+            TransitionToStage(GrowthStage.Empty);
+            return;
+        }
 
-            case GrowthStage.Growing:
-                if (!isWatered) WaterCrop();
-                break;
+        // STEP 2: If a seed is currently growing
+        if (currentStage == GrowthStage.Growing)
+        {
+            // Case A: If it's dry, water it
+            if (!isWatered)
+            {
+                WaterCrop();
+                playerAction.DisplayDialogue($"You watered the thirsty {activeSeedName} seed!");
+            }
+            // Case B: If it's already watered, display its current status report
+            else
+            {
+                float progressPercent = (growthTimer / timeToGrow) * 100f;
+                float daysRemaining = Mathf.Max(0f, timeToGrow - growthTimer);
+                
+                // Formats status to show current progress cleanly to the player
+                string statusReport = $"This {activeSeedName} plant is growing happily! " +
+                                       $"\nProgress: {progressPercent:F0}% filled. " +
+                                       $"\nEstimated time remaining: {daysRemaining:F1} in-game days.";
+                                       
+                playerAction.DisplayDialogue(statusReport);
+            }
+            return;
+        }
 
-            case GrowthStage.ReadyToHarvest:
-                inventory.AddCrop(cropYieldAmount);
-                TransitionToStage(GrowthStage.Empty);
-                break;
+        // STEP 3: If the pot is completely empty, handle the planting logic sequence
+        if (currentStage == GrowthStage.Empty)
+        {
+            // For now, checks if player has standard seeds. 
+            // (You can expand this check later if your inventory system uses multiple item names/IDs!)
+            if (inventory.seedCount > 0)
+            {
+                inventory.UseSeed();
+                activeSeedName = "Standard Seed"; // Tag the seed type to this pot instance
+                PlantSeed();
+                
+                playerAction.DisplayDialogue($"You planted a {activeSeedName} into the soil!");
+            }
+            else
+            {
+                // Fallback warning text if player interacts completely empty handed
+                playerAction.DisplayDialogue("You don't have any seeds in your inventory to plant here!");
+            }
         }
     }
 
@@ -81,6 +124,7 @@ public class Farming : Interactable
                 float currentTime = timeManager.currentTimeOfDay;
                 float timeDelta = currentTime - lastTimeOfDay;
 
+                // Handle clock loop midnight rollover wrapping boundary seamlessly
                 if (timeDelta < 0) timeDelta += 1f;
 
                 growthTimer += timeDelta;
@@ -136,6 +180,7 @@ public class Farming : Interactable
 
         if (plantAnimator != null) plantAnimator.SetInteger("GrowthStage", (int)currentStage);
 
+        // Sets up basic dynamic dialogue values as fallback backup variables
         switch (currentStage)
         {
             case GrowthStage.Empty: dialogueText = "This pot is ready for seeds! Press Enter to plant."; break;
