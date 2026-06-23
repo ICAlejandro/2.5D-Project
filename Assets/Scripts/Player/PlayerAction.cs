@@ -71,7 +71,7 @@ public class PlayerAction : MonoBehaviour
             Debug.Log($"BoxCast successfully hit: {hit.collider.gameObject.name}");
 
             // Look for the bridge component
-            Interactable targetInteractable = hit.collider.GetComponent<Interactable>();
+            Interactable targetInteractable = hit.collider.GetComponentInParent<Interactable>();
             if (targetInteractable != null)
             {
                 // Execute the interaction bridge without caring what script type it actually is!
