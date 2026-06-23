@@ -259,8 +259,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4279217152
+  m_fontColor: {r: 0, g: 0.6754716, b: 0.060243223, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -878,15 +878,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 164095cf72acfcd42922be497d25cd81, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 10.63
+      value: 15.1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 164095cf72acfcd42922be497d25cd81, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.28
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 164095cf72acfcd42922be497d25cd81, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 122.54593
+      value: 128.1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 164095cf72acfcd42922be497d25cd81, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1023,8 +1023,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4279217152
+  m_fontColor: {r: 0, g: 0.6754716, b: 0.060243223, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1240,8 +1240,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4279217152
+  m_fontColor: {r: 0, g: 0.6754716, b: 0.060243223, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2588,7 +2588,7 @@ MonoBehaviour:
     m_Left: 20
     m_Right: 0
     m_Top: 20
-    m_Bottom: 0
+    m_Bottom: 20
   m_ChildAlignment: 0
   m_Spacing: 10
   m_ChildForceExpandWidth: 0
@@ -2999,15 +2999,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: f005387979b90424aa57e0cc5262e9de, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.79
+      value: -14.8
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f005387979b90424aa57e0cc5262e9de, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.06
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f005387979b90424aa57e0cc5262e9de, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 122.54593
+      value: 127
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f005387979b90424aa57e0cc5262e9de, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3870,15 +3870,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 0dfe5f6676ef79346b2c9bff67391175, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.75
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0dfe5f6676ef79346b2c9bff67391175, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.11
+      value: 3.7
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0dfe5f6676ef79346b2c9bff67391175, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 122.736435
+      value: 128.3
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0dfe5f6676ef79346b2c9bff67391175, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4109,7 +4109,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f0858ae8d5a72942b67859c2230feea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DayNightCycle
-  dayDurationInSeconds: 60
   currentTimeOfDay: 0
 --- !u!1 &1447987275 stripped
 GameObject:
@@ -4219,8 +4218,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4279217152
+  m_fontColor: {r: 0, g: 0.6754716, b: 0.060243223, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -4356,8 +4355,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4279217152
+  m_fontColor: {r: 0, g: 0.6754716, b: 0.060243223, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -4630,8 +4629,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4279217152
+  m_fontColor: {r: 0, g: 0.6754716, b: 0.060243223, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -5268,10 +5267,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.VerticalLayoutGroup
   m_Padding:
-    m_Left: 20
-    m_Right: 0
+    m_Left: 0
+    m_Right: 20
     m_Top: 20
-    m_Bottom: 0
+    m_Bottom: 20
   m_ChildAlignment: 2
   m_Spacing: 10
   m_ChildForceExpandWidth: 0

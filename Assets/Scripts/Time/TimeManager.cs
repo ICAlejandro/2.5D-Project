@@ -31,14 +31,20 @@ public class TimeManager : MonoBehaviour
 
     private void CalculateInGameClock()
     {
+        // Force a absolute safety check: if dayDuration is set to 0 by accident, stop crash
+        if (dayDurationInSeconds <= 0) dayDurationInSeconds = 1f;
+
+        // 1. Advance time purely based on real-world seconds passed divided by your target duration
         currentTimeOfDay += Time.deltaTime / dayDurationInSeconds;
 
+        // 2. Exact boundary check for day rollover
         if (currentTimeOfDay >= 1f)
         {
-            currentTimeOfDay -= 1f;
+            currentTimeOfDay = 0f; // Reset exactly to 0 to prevent drift acceleration
             AdvanceCalendarDay();
         }
 
+        // 3. Translate the fractional value into stable digital metrics
         float totalSecondsInDay = HoursInDay * MinutesInHour * SecondsInMinute;
         float currentSecondsElapsed = currentTimeOfDay * totalSecondsInDay;
 
