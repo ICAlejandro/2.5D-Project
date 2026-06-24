@@ -12,9 +12,12 @@ public class OnlineShop : Interactable
     public int cropValue = 10;
 
     [Header("Delivery Settings")]
-    [SerializeField] private float     deliveryTimeSeconds = 3f;
+    [SerializeField] private float      deliveryTimeSeconds = 3f;
     [SerializeField] private GameObject packagePrefab;
     [SerializeField] private Transform  deliverySpawnPoint;
+
+    [Tooltip("The seed type this shop sells. Drag a SeedData asset here.")]
+    public SeedData seedForSale;
 
     private IInventory inventory;
     private ShopUI     shopUI;
@@ -34,11 +37,17 @@ public class OnlineShop : Interactable
     {
         if (inventory == null) return;
 
+        if (seedForSale == null)
+        {
+            Debug.LogWarning("OnlineShop has no SeedData assigned! Please set seedForSale in the Inspector.");
+            return;
+        }
+
         if (inventory.GoldCount >= seedCost)
         {
             inventory.SpendGold(seedCost);
             StartCoroutine(ProcessDeliveryRoutine(1));
-            Debug.Log("Ordered 1 seed via Online Shop!");
+            Debug.Log($"Ordered 1 {seedForSale.seedName} via Online Shop!");
         }
         else
         {
@@ -57,7 +66,10 @@ public class OnlineShop : Interactable
 
             Delivery deliveryScript = spawnedPackage.GetComponent<Delivery>();
             if (deliveryScript != null)
+            {
+                deliveryScript.seedType       = seedForSale;
                 deliveryScript.seedCountInside = amountOrdered;
+            }
 
             DeliveryZoneBlocker blocker = deliverySpawnPoint.GetComponent<DeliveryZoneBlocker>();
             if (blocker != null)

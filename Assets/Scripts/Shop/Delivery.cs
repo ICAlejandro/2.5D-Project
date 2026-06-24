@@ -3,19 +3,26 @@ using UnityEngine;
 public class Delivery : Interactable
 {
     [Header("Package Contents")]
+    [Tooltip("Drag the SeedData asset for the seed type this package contains.")]
+    public SeedData seedType;
     public int seedCountInside = 1;
 
     public override void Interact(GameObject playerObject)
     {
-        PlayerInventory inventory = playerObject.GetComponent<PlayerInventory>();
+        IInventory inventory = playerObject.GetComponent<PlayerInventory>();
 
         if (inventory != null)
         {
-            // AddSeeds fires OnInventoryChanged so the HUD updates automatically
-            inventory.AddSeeds(seedCountInside);
-            Debug.Log($"Collected package! Added {seedCountInside} seed(s) to inventory.");
+            if (seedType == null)
+            {
+                Debug.LogWarning("Delivery package has no SeedData assigned! Please set seedType in the Inspector.");
+                return;
+            }
 
-            // Resolve from ServiceLocator instead of searching the scene
+            // AddSeeds fires OnInventoryChanged so the HUD updates automatically
+            inventory.AddSeeds(seedType, seedCountInside);
+            Debug.Log($"Collected package! Added {seedCountInside} {seedType.seedName}(s) to inventory.");
+
             DeliveryZoneBlocker blocker = FindFirstObjectByType<DeliveryZoneBlocker>();
 
             Destroy(gameObject);

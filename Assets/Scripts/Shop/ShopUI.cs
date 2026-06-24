@@ -2,8 +2,9 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Handles shop UI only — opening/closing the panel, cursor state, and timescale.
+/// Handles shop UI only — opening/closing the panel and cursor state.
 /// Transaction logic lives separately in OnlineShop.cs on the same GameObject.
+/// Uses PlayerStateManager to lock/unlock player movement.
 /// </summary>
 public class ShopUI : MonoBehaviour
 {
@@ -23,9 +24,9 @@ public class ShopUI : MonoBehaviour
 
         if (shopCanvas != null) shopCanvas.SetActive(false);
 
-        if (buySeedButton != null) buySeedButton.onClick.AddListener(onlineShop.BuySeed);
+        if (buySeedButton  != null) buySeedButton.onClick.AddListener(onlineShop.BuySeed);
         if (sellCropButton != null) sellCropButton.onClick.AddListener(onlineShop.SellCrop);
-        if (closeButton != null)   closeButton.onClick.AddListener(CloseShop);
+        if (closeButton    != null) closeButton.onClick.AddListener(CloseShop);
     }
 
     public void OpenShop()
@@ -34,8 +35,10 @@ public class ShopUI : MonoBehaviour
 
         shopCanvas.SetActive(true);
         Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-        Time.timeScale = 0f;
+        Cursor.visible   = true;
+
+        // Lock player via state manager — distinct from dialogue
+        PlayerStateManager.SetState(PlayerState.Dialogue);
     }
 
     public void CloseShop()
@@ -44,7 +47,8 @@ public class ShopUI : MonoBehaviour
 
         shopCanvas.SetActive(false);
         Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-        Time.timeScale = 1f;
+        Cursor.visible   = false;
+
+        PlayerStateManager.SetState(PlayerState.Free);
     }
 }

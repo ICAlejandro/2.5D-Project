@@ -1,39 +1,80 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Concrete inventory implementation. Registers itself as IInventory
-/// so consumers never reference this class directly.
+/// Concrete inventory. Seed types are configured in the Inspector
+/// via the Seed Inventory list — no coding needed to add new seed types.
 /// </summary>
 public class PlayerInventory : MonoBehaviour, IInventory
 {
-    [Header("Inventory Tracking")]
+    [Header("Gold & Crops")]
     [SerializeField] private int  goldCount = 0;
-    [SerializeField] private int  seedCount = 3;
     [SerializeField] private int  cropCount = 0;
     [SerializeField] private bool hasWater  = true;
 
+    [Header("Seed Inventory")]
+    [Tooltip("Add one entry per seed type. Drag a SeedData asset and set a starting amount.")]
+    [SerializeField] private List<SeedInventoryEntry> seedInventory = new List<SeedInventoryEntry>();
+
     // ── IInventory properties ──────────────────────────────────────────────
     public int  GoldCount => goldCount;
-    public int  SeedCount => seedCount;
     public int  CropCount => cropCount;
     public bool HasWater  => hasWater;
+    public List<SeedInventoryEntry> SeedInventory => seedInventory;
 
-    // ── IInventory event ───────────────────────────────────────────────────
     public event Action OnInventoryChanged;
 
     // ── Unity Lifecycle ────────────────────────────────────────────────────
     void Awake()
     {
-        // Register as the interface — consumers never need to know it's a PlayerInventory
         ServiceLocator.Register<IInventory>(this);
     }
 
-    // ── IInventory mutators ────────────────────────────────────────────────
+    // ── Seed methods ───────────────────────────────────────────────────────
+    public int GetSeedAmount(SeedData seed)
+    {
+        SeedInventoryEntry entry = seedInventory.Find(e => e.seedData == seed);
+        return entry != null ? entry.amount : 0;
+    }
+
+    public bool UseSeed(SeedData seed)
+    {
+        SeedInventoryEntry entry = seedInventory.Find(e => e.seedData == seed);
+        if (entry != null && entry.amount > 0)
+        {
+            entry.amount--;
+            Debug.Log($"Used 1 {seed.seedName}. Remaining: {entry.amount}");
+            OnInventoryChanged?.Invoke();
+            return true;
+        }
+
+        Debug.Log($"No {seed.seedName} left!");
+        return false;
+    }
+
+    public void AddSeeds(SeedData seed, int amount)
+    {
+        SeedInventoryEntry entry = seedInventory.Find(e => e.seedData == seed);
+        if (entry != null)
+        {
+            entry.amount += amount;
+        }
+        else
+        {
+            // Auto-add a new entry if this seed type isn't in the list yet
+            seedInventory.Add(new SeedInventoryEntry { seedData = seed, amount = amount });
+        }
+
+        Debug.Log($"Added {amount} {seed.seedName}. Total: {GetSeedAmount(seed)}");
+        OnInventoryChanged?.Invoke();
+    }
+
+    // ── Other mutators ─────────────────────────────────────────────────────
     public void AddCrop(int amount)
     {
         cropCount += amount;
-        Debug.Log("Crop added to bag! Total Crops: " + cropCount);
+        Debug.Log("Crop added! Total: " + cropCount);
         OnInventoryChanged?.Invoke();
     }
 
@@ -42,37 +83,16 @@ public class PlayerInventory : MonoBehaviour, IInventory
         if (cropCount >= amount)
         {
             cropCount -= amount;
-            goldCount += (amount * pricePerCrop);
-            Debug.Log($"Sold {amount} crops for {amount * pricePerCrop} gold!");
+            goldCount += amount * pricePerCrop;
+            Debug.Log($"Sold {amount} crop(s) for {amount * pricePerCrop} gold!");
             OnInventoryChanged?.Invoke();
         }
-    }
-
-    public bool UseSeed()
-    {
-        if (seedCount > 0)
-        {
-            seedCount--;
-            Debug.Log("Planted a seed. Seeds remaining: " + seedCount);
-            OnInventoryChanged?.Invoke();
-            return true;
-        }
-
-        Debug.Log("No seeds left!");
-        return false;
-    }
-
-    public void AddSeeds(int amount)
-    {
-        seedCount += amount;
-        Debug.Log("Picked up " + amount + " seeds. Total: " + seedCount);
-        OnInventoryChanged?.Invoke();
     }
 
     public void SpendGold(int amount)
     {
         goldCount -= amount;
-        Debug.Log($"Spent {amount} gold. Remaining: " + goldCount);
+        Debug.Log($"Spent {amount} gold. Remaining: {goldCount}");
         OnInventoryChanged?.Invoke();
     }
 }

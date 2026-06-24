@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
@@ -6,28 +7,28 @@ public class PlayerAction : MonoBehaviour
 {
     [Header("Interaction Settings")]
     public float InteractionDistance = 4f;
-    
+
     [Tooltip("Make sure either 'Interactable' or 'Interactables' is selected here!")]
     public LayerMask interactableLayer;
 
     [Header("3D BoxCast Dimensions")]
-    public float boxWidth = 1f;
+    public float boxWidth  = 1f;
     public float boxHeight = 3f;
-    public float boxDepth = 1f;
+    public float boxDepth  = 1f;
 
-    [Header("Master UI References")]
-    public GameObject masterDialogueCanvas;
-    public TextMeshProUGUI UI_TextMesh;
+    [Header("Dialogue Canvas References")]
+    public GameObject      dialogueCanvas;
+    public TextMeshProUGUI dialogueText;
 
     private PlayerMovement playerMovement;
-    private bool isDialogueOpen = false;
+    private bool   isDialogueOpen = false;
+    private Action _onDialogueClosed;
 
     void Start()
     {
         playerMovement = GetComponent<PlayerMovement>();
-        if (masterDialogueCanvas != null) masterDialogueCanvas.SetActive(false);
+        if (dialogueCanvas != null) dialogueCanvas.SetActive(false);
 
-        // Fail-safe automatic backup check for the 'Interactables' layer naming
         if (interactableLayer == 0)
         {
             int defaultLayerIndex = LayerMask.NameToLayer("Interactables");
@@ -41,18 +42,13 @@ public class PlayerAction : MonoBehaviour
 
     void Update()
     {
-        if (Time.timeScale == 0f) return;
+        // Allow closing dialogue during Dialogue state, block everything else
+        if (PlayerStateManager.IsState(PlayerState.Cutscene)) return;
 
         if (Keyboard.current != null && Keyboard.current.enterKey.wasPressedThisFrame)
         {
-            if (isDialogueOpen)
-            {
-                CloseDialogue();
-            }
-            else
-            {
-                TryInteract();
-            }
+            if (isDialogueOpen) CloseDialogue();
+            else if (PlayerStateManager.IsFree) TryInteract();
         }
     }
 
@@ -62,21 +58,15 @@ public class PlayerAction : MonoBehaviour
         lookDirection.y = 0f;
         lookDirection.Normalize();
 
-        Vector3 boxSize = new Vector3(boxWidth, boxHeight, boxDepth);
+        Vector3    boxSize = new Vector3(boxWidth, boxHeight, boxDepth);
         RaycastHit hit;
 
-        // Perform the BoxCast scan
         if (Physics.BoxCast(transform.position, boxSize / 2f, lookDirection, out hit, Quaternion.identity, InteractionDistance, interactableLayer))
         {
             Debug.Log($"BoxCast successfully hit: {hit.collider.gameObject.name}");
-
-            // Look for the bridge component
             Interactable targetInteractable = hit.collider.GetComponentInParent<Interactable>();
             if (targetInteractable != null)
-            {
-                // Execute the interaction bridge without caring what script type it actually is!
                 targetInteractable.Interact(gameObject);
-            }
         }
         else
         {
@@ -84,22 +74,37 @@ public class PlayerAction : MonoBehaviour
         }
     }
 
-    // Public method that the base Interactable bridge can call to display text
-    public void DisplayDialogue(string text)
+    /// <summary>
+    /// Shows dialogue text. Optional onClose callback fires when player dismisses it.
+    /// Automatically locks player movement via PlayerStateManager.
+    /// </summary>
+    public void DisplayDialogue(string text, Action onClose = null)
     {
-        if (masterDialogueCanvas == null || UI_TextMesh == null) return;
+        if (dialogueCanvas == null || dialogueText == null) return;
 
-        UI_TextMesh.text = text;
-        masterDialogueCanvas.SetActive(true);
+        _onDialogueClosed = onClose;
+        dialogueText.text = text;
+        dialogueCanvas.SetActive(true);
         isDialogueOpen = true;
+
+        // Lock player movement — state is Dialogue, not a cutscene
+        PlayerStateManager.SetState(PlayerState.Dialogue);
     }
 
     void CloseDialogue()
     {
-        if (masterDialogueCanvas != null)
+        if (dialogueCanvas != null)
         {
-            masterDialogueCanvas.SetActive(false);
+            dialogueCanvas.SetActive(false);
             isDialogueOpen = false;
+
+            // Only return to Free if OptionUI isn't also open
+            if (!isDialogueOpen)
+                PlayerStateManager.SetState(PlayerState.Free);
+
+            Action callback = _onDialogueClosed;
+            _onDialogueClosed = null;
+            callback?.Invoke();
         }
     }
 
@@ -108,10 +113,9 @@ public class PlayerAction : MonoBehaviour
         Vector3 lookDirection = playerMovement != null ? playerMovement.GetLookDirection() : transform.forward;
         lookDirection.y = 0f;
         lookDirection.Normalize();
-        
+
         Gizmos.color = Color.green;
         Vector3 boxSize = new Vector3(boxWidth, boxHeight, boxDepth);
-        
         Gizmos.DrawWireCube(transform.position + lookDirection * InteractionDistance, boxSize);
     }
 }

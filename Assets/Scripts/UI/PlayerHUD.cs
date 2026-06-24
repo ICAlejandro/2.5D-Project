@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using TMPro;
 
@@ -43,7 +44,8 @@ public class PlayerHUD : MonoBehaviour
         if (inventory == null) return;
 
         if (goldText  != null) goldText.text  = "Gold: "      + inventory.GoldCount;
-        if (seedText  != null) seedText.text  = "Seeds: "     + inventory.SeedCount;
+        int totalSeeds = inventory.SeedInventory.Sum(e => e.amount);
+        if (seedText  != null) seedText.text  = "Seeds: " + totalSeeds;
         if (waterText != null) waterText.text = "Water Can: " + (inventory.HasWater ? "Full" : "Empty");
         if (cropText  != null) cropText.text  = "Crops: "     + inventory.CropCount;
     }

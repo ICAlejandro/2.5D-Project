@@ -9,47 +9,46 @@ public class PlayerMovement : MonoBehaviour
     [Header("Camera Reference (Optional Override)")]
     public Transform cameraTransform;
 
-    private Rigidbody rb;
-    private Vector3 moveInput;
-    private Animator anim;
+    private Rigidbody      rb;
+    private Vector3        moveInput;
+    private Animator       anim;
     private SpriteRenderer spriteRenderer;
 
-    private string lastDirection = "Up";
-    private Vector3 lookDirection = Vector3.forward; 
+    private string  lastDirection = "Up";
+    private Vector3 lookDirection = Vector3.forward;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        anim = GetComponent<Animator>();
+        rb             = GetComponent<Rigidbody>();
+        anim           = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
-        // Fallback: If no camera transform is manually assigned, use the main camera
         if (cameraTransform == null && Camera.main != null)
-        {
             cameraTransform = Camera.main.transform;
-        }
     }
 
     void Update()
     {
+        // Block all input if the player isn't free
+        if (!PlayerStateManager.IsFree)
+        {
+            // Zero out movement so the player stops instantly
+            moveInput = Vector3.zero;
+            HandleAnimations(); // Still update animations so idle plays correctly
+            return;
+        }
+
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveZ = Input.GetAxisRaw("Vertical");
 
-        float cameraYRotation = 0f;
-        if (cameraTransform != null)
-        {
-            cameraYRotation = cameraTransform.eulerAngles.y;
-        }
-        
+        float cameraYRotation = cameraTransform != null ? cameraTransform.eulerAngles.y : 0f;
         Quaternion cameraRotation = Quaternion.Euler(0f, cameraYRotation, 0f);
 
         Vector3 rawInput = new Vector3(moveX, 0f, moveZ).normalized;
         moveInput = cameraRotation * rawInput;
 
         if (moveInput.magnitude > 0)
-        {
             lookDirection = moveInput.normalized;
-        }
 
         UpdateFacingDirection(moveX, moveZ);
         HandleAnimations();
@@ -60,10 +59,7 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = new Vector3(moveInput.x * moveSpeed, rb.linearVelocity.y, moveInput.z * moveSpeed);
     }
 
-    public Vector3 GetLookDirection()
-    {
-        return lookDirection;
-    }
+    public Vector3 GetLookDirection() => lookDirection;
 
     void UpdateFacingDirection(float x, float z)
     {
@@ -71,12 +67,12 @@ public class PlayerMovement : MonoBehaviour
         {
             if (Mathf.Abs(x) >= Mathf.Abs(z))
             {
-                if (x > 0) lastDirection = "Right";
+                if (x > 0)      lastDirection = "Right";
                 else if (x < 0) lastDirection = "Left";
             }
             else
             {
-                if (z > 0) lastDirection = "Up";
+                if (z > 0)      lastDirection = "Up";
                 else if (z < 0) lastDirection = "Down";
             }
         }
@@ -87,16 +83,16 @@ public class PlayerMovement : MonoBehaviour
         if (moveInput.magnitude > 0)
         {
             if (lastDirection == "Right") { anim.Play("Player_Walk_Right"); spriteRenderer.flipX = false; }
-            else if (lastDirection == "Left") anim.Play("Player_Walk_Left");
-            else if (lastDirection == "Up") anim.Play("Player_Walk_Up");
-            else if (lastDirection == "Down") anim.Play("Player_Walk_Down");
+            else if (lastDirection == "Left")  anim.Play("Player_Walk_Left");
+            else if (lastDirection == "Up")    anim.Play("Player_Walk_Up");
+            else if (lastDirection == "Down")  anim.Play("Player_Walk_Down");
         }
         else
         {
             if (lastDirection == "Right") { anim.Play("Player_Idle_Right"); spriteRenderer.flipX = false; }
-            else if (lastDirection == "Left") anim.Play("Player_Idle_Left");
-            else if (lastDirection == "Up") anim.Play("Player_Idle_Up");
-            else if (lastDirection == "Down") anim.Play("Player_Idle_Down");
+            else if (lastDirection == "Left")  anim.Play("Player_Idle_Left");
+            else if (lastDirection == "Up")    anim.Play("Player_Idle_Up");
+            else if (lastDirection == "Down")  anim.Play("Player_Idle_Down");
         }
     }
 }

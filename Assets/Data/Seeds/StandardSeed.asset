@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5fd16d26993e8b47b08fc6ca6c0e3ca, type: 3}
+  m_Name: StandardSeed
+  m_EditorClassIdentifier: Assembly-CSharp::SeedData
+  seedName: Standard Seed
+  description: A basic seed. Good for beginners.
+  daysToGrow: 1
+  cropYieldAmount: 1
+  plantSprite: {fileID: -2093741946, guid: b0d06b4b925ef114e971a5ca6192159c, type: 3}
+  seedIcon: {fileID: -2093741946, guid: b0d06b4b925ef114e971a5ca6192159c, type: 3}
