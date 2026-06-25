@@ -20,6 +20,27 @@ public class Farming : Interactable
     [Tooltip("Assign the OptionUI component from your OptionCanvas.")]
     public OptionUI optionUI;
 
+    [Header("Farming Dialogue Settings (Editable in Inspector)")]
+    [TextArea(2, 5)]
+    [Tooltip("Text shown when the soil plot is completely empty. Prompting to plant a seed.")]
+    public string emptyPlotPrompt = "It's empty, should I plant something?";
+
+    [TextArea(2, 5)]
+    [Tooltip("Text shown when a seed is planted but needs water. Use {0} as a placeholder for the seed name.")]
+    public string waterPrompt = "Water the {0}?";
+
+    [TextArea(2, 5)]
+    [Tooltip("Text shown when interacting with a watered growing plant. Use {0} for name, {1} for progress %, and {2} for days left.")]
+    public string growthStatusDialogue = "{0} is growing!\nProgress: {1:F0}%\nDays remaining: {2:F1}";
+
+    [TextArea(2, 5)]
+    [Tooltip("Dialogue displayed when a crop is successfully watered.")]
+    public string waterSuccessDialogue = "You watered the soil patch.";
+
+    [TextArea(2, 5)]
+    [Tooltip("Dialogue displayed upon harvesting a mature crop. Use {0} for yield amount and {1} for the crop name.")]
+    public string harvestSuccessDialogue = "Harvested {0} {1}(s)!";
+
     private SeedData      activeSeed;
     private Material      wetSoilMaterial;
     private float         growthTimer = 0f;
@@ -48,100 +69,134 @@ public class Farming : Interactable
 
     public override void Interact(GameObject playerObject)
     {
-        IInventory   inventory    = playerObject.GetComponent<PlayerInventory>();
+        IInventory inventory = playerObject.GetComponent<PlayerInventory>();
+        if (inventory == null)
+        {
+            inventory = ServiceLocator.Get<IInventory>();
+        }
+        if (inventory == null) return;
+
         PlayerAction playerAction = playerObject.GetComponent<PlayerAction>();
 
-        if (inventory == null || playerAction == null) return;
-
-        // ── Harvest ────────────────────────────────────────────────────────
-        if (currentStage == GrowthStage.ReadyToHarvest)
+        // LAYER 1: Plot is completely empty
+        if (currentStage == GrowthStage.Empty)
         {
-            inventory.AddCrop(activeSeed.cropYieldAmount);
-            Debug.Log($"Harvested {activeSeed.cropYieldAmount} {activeSeed.seedName} crop(s)!");
-            activeSeed = null;
-            TransitionToStage(GrowthStage.Empty);
-            return;
+            if (optionUI == null) 
+                optionUI = FindFirstObjectByType<OptionUI>();
+
+            if (playerAction != null)
+            {
+                playerAction.DisplayDialogue(emptyPlotPrompt);
+            }
+
+            if (optionUI != null)
+            {
+                PlayerStateManager.SetState(PlayerState.Dialogue);
+
+                optionUI.ShowYesNo(
+                    onYes: () =>
+                    {
+                        optionUI.ShowInventoryList(inventory.SeedInventory, (selectedSeed) =>
+                        {
+                            if (inventory.UseSeed(selectedSeed))
+                            {
+                                PlantSeed(selectedSeed);
+                                if (playerAction != null) playerAction.CloseDialogue();
+                            }
+                            else
+                            {
+                                Debug.LogWarning("Failed to plant: Selected seed is out of stock!");
+                                if (playerAction != null) playerAction.CloseDialogue();
+                            }
+                        });
+                    },
+                    onNo: () =>
+                    {
+                        if (playerAction != null) playerAction.CloseDialogue();
+                    }
+                );
+            }
         }
-
-        // ── Growing + watered → show status only ──────────────────────────
-        if (currentStage == GrowthStage.Growing && isWatered)
+        // LAYER 2: Plot is occupied by a growing plant
+        else if (currentStage == GrowthStage.Growing)
         {
-            float progressPercent = (growthTimer / activeSeed.daysToGrow) * 100f;
-            float daysRemaining   = Mathf.Max(0f, activeSeed.daysToGrow - growthTimer);
-            string status = $"Your {activeSeed.seedName} is growing happily!\n" +
-                            $"Progress: {progressPercent:F0}%\n" +
-                            $"Est. time remaining: {daysRemaining:F1} day(s).";
-            playerAction.DisplayDialogue(status);
-            return;
-        }
-
-        // ── Growing + not watered → dialogue, then yes/no ─────────────────
-        if (currentStage == GrowthStage.Growing && !isWatered)
-        {
-            playerAction.DisplayDialogue(
-                $"Your {activeSeed.seedName} is thirsty! Water it?",
-                onClose: () =>
+            if (!isWatered)
+            {
+                if (playerAction != null && activeSeed != null)
                 {
+                    string formattedPrompt = string.Format(waterPrompt, activeSeed.seedName);
+                    playerAction.DisplayDialogue(formattedPrompt);
+                }
+
+                if (optionUI != null)
+                {
+                    PlayerStateManager.SetState(PlayerState.Dialogue);
+
                     optionUI.ShowYesNo(
                         onYes: () =>
                         {
                             WaterCrop();
-                            playerAction.DisplayDialogue($"You watered the {activeSeed.seedName}!");
+                            // Close Option panels before sending text so the state settles perfectly
+                            optionUI.HideAll(); 
+                            if (playerAction != null) playerAction.DisplayDialogue(waterSuccessDialogue);
                         },
-                        onNo: () => { }
-                    );
-                }
-            );
-            return;
-        }
-
-        // ── Empty → dialogue, then yes/no, then seed list ─────────────────
-        if (currentStage == GrowthStage.Empty)
-        {
-            playerAction.DisplayDialogue(
-                "This pot is empty. Would you like to plant a seed?",
-                onClose: () =>
-                {
-                    optionUI.ShowYesNo(
-                        onYes: () =>
+                        onNo: () =>
                         {
-                            optionUI.ShowInventoryList(inventory.SeedInventory, selectedSeed =>
-                            {
-                                if (inventory.UseSeed(selectedSeed))
-                                {
-                                    activeSeed = selectedSeed;
-                                    PlantSeed();
-                                    playerAction.DisplayDialogue($"You planted a {selectedSeed.seedName}!");
-                                }
-                            });
-                        },
-                        onNo: () => { }
+                            optionUI.HideAll();
+                            if (playerAction != null) playerAction.CloseDialogue();
+                        }
                     );
                 }
-            );
+            }
+            else
+            {
+                if (playerAction != null && activeSeed != null) 
+                {
+                    float progress = (growthTimer / activeSeed.daysToGrow) * 100f;
+                    float remaining = Mathf.Max(0f, activeSeed.daysToGrow - growthTimer);
+                    
+                    string formattedStatus = string.Format(growthStatusDialogue, activeSeed.seedName, progress, remaining);
+                    playerAction.DisplayDialogue(formattedStatus);
+                }
+            }
+        }
+        // LAYER 3: Plot is ready to harvest
+        else if (currentStage == GrowthStage.ReadyToHarvest)
+        {
+            if (activeSeed != null)
+            {
+                inventory.AddCrop(activeSeed.cropYieldAmount);
+                if (playerAction != null) 
+                {
+                    string formattedHarvest = string.Format(harvestSuccessDialogue, activeSeed.cropYieldAmount, activeSeed.seedName);
+                    playerAction.DisplayDialogue(formattedHarvest);
+                }
+            }
+            
+            activeSeed = null;
+            TransitionToStage(GrowthStage.Empty);
         }
     }
 
     private void HandleGrowthSimulation()
     {
-        if (currentStage == GrowthStage.Growing && isWatered && activeSeed != null)
-        {
-            if (timeProvider != null)
-            {
-                float currentTime = timeProvider.CurrentTimeOfDay;
-                float timeDelta   = currentTime - lastTimeOfDay;
-                if (timeDelta < 0) timeDelta += 1f;
-                growthTimer  += timeDelta;
-                lastTimeOfDay = currentTime;
-            }
-            else
-            {
-                growthTimer += Time.deltaTime / 60f;
-            }
+        if (currentStage != GrowthStage.Growing || !isWatered || activeSeed == null) return;
 
-            if (growthTimer >= activeSeed.daysToGrow)
-                TransitionToStage(GrowthStage.ReadyToHarvest);
+        if (timeProvider != null)
+        {
+            float now = timeProvider.CurrentTimeOfDay;
+            float delta = now - lastTimeOfDay;
+            if (delta < 0) delta += 1f;
+            growthTimer  += delta;
+            lastTimeOfDay = now;
         }
+        else
+        {
+            growthTimer += Time.deltaTime / 60f;
+        }
+
+        if (growthTimer >= activeSeed.daysToGrow)
+            TransitionToStage(GrowthStage.ReadyToHarvest);
     }
 
     private void TransitionToStage(GrowthStage nextStage)
@@ -151,18 +206,23 @@ public class Farming : Interactable
         RefreshVisuals();
     }
 
-    void PlantSeed()
+    private void PlantSeed(SeedData seed)
     {
+        activeSeed  = seed;
         growthTimer = 0f;
         isWatered   = false;
-        if (timeProvider != null) lastTimeOfDay = timeProvider.CurrentTimeOfDay;
+        
+        if (timeProvider != null) 
+            lastTimeOfDay = timeProvider.CurrentTimeOfDay;
+            
         TransitionToStage(GrowthStage.Growing);
     }
 
-    void WaterCrop()
+    private void WaterCrop()
     {
         isWatered = true;
-        if (timeProvider != null) lastTimeOfDay = timeProvider.CurrentTimeOfDay;
+        if (timeProvider != null) 
+            lastTimeOfDay = timeProvider.CurrentTimeOfDay;
         RefreshVisuals();
     }
 

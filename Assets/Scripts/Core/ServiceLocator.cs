@@ -4,22 +4,34 @@ using UnityEngine;
 
 /// <summary>
 /// A simple phonebook for shared game services.
-/// Instead of searching the whole scene with FindFirstObjectByType,
-/// scripts register themselves here once and others look them up instantly.
+/// Attach this to your Manager GameObject in the scene.
 ///
 /// REGISTER (in Awake on the owning script):
-///   ServiceLocator.Register<TimeManager>(this);
+///   ServiceLocator.Register<ITimeProvider>(this);
 ///
 /// RESOLVE (anywhere else):
-///   var tm = ServiceLocator.Get<TimeManager>();
+///   var tm = ServiceLocator.Get<ITimeProvider>();
 /// </summary>
-public static class ServiceLocator
+public class ServiceLocator : MonoBehaviour
 {
+    public static ServiceLocator Instance { get; private set; }
+
     private static readonly Dictionary<Type, object> _services = new Dictionary<Type, object>();
+
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
 
     public static void Register<T>(T instance) where T : class
     {
         _services[typeof(T)] = instance;
+        Debug.Log($"[ServiceLocator] Registered: {typeof(T).Name}");
     }
 
     public static T Get<T>() where T : class
@@ -31,6 +43,5 @@ public static class ServiceLocator
         return null;
     }
 
-    /// <summary>Call this on scene unload to avoid stale references between scenes.</summary>
     public static void Clear() => _services.Clear();
 }

@@ -1,9 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// Concrete time implementation. Registers itself as ITimeProvider
-/// so consumers never reference this class directly.
-/// </summary>
 public class TimeManager : MonoBehaviour, ITimeProvider
 {
     [Header("Time Calibration")]
@@ -48,8 +44,8 @@ public class TimeManager : MonoBehaviour, ITimeProvider
     // ── Unity Lifecycle ────────────────────────────────────────────────────
     void Awake()
     {
-        // Register as the interface — consumers never need to know it's a TimeManager
         ServiceLocator.Register<ITimeProvider>(this);
+        Debug.Log("[TimeManager] Registered as ITimeProvider.");
     }
 
     void Update()
@@ -82,7 +78,7 @@ public class TimeManager : MonoBehaviour, ITimeProvider
             AdvanceCalendarDay();
         }
 
-        float totalSecondsInDay    = HoursInDay * MinutesInHour * SecondsInMinute;
+        float totalSecondsInDay     = HoursInDay * MinutesInHour * SecondsInMinute;
         float currentSecondsElapsed = currentTimeOfDay * totalSecondsInDay;
 
         currentHour   = Mathf.FloorToInt(currentSecondsElapsed / (MinutesInHour * SecondsInMinute));
