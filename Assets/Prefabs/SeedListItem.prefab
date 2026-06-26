@@ -42,8 +42,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 469.1233, y: 115}
-  m_SizeDelta: {x: -1472.8925, y: -913.79}
+  m_AnchoredPosition: {x: 469.1233, y: 81.96686}
+  m_SizeDelta: {x: -1472.8925, y: -976.0663}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &935137724822031509
 CanvasRenderer:
@@ -210,8 +210,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 5.9573975, y: 34}
-  m_SizeDelta: {x: 211.9148, y: 50}
+  m_AnchoredPosition: {x: -16, y: 27}
+  m_SizeDelta: {x: 211.9148, y: 28.898}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4483708541456821559
 CanvasRenderer:
@@ -241,7 +241,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'name
+  m_text: 'Sample Seed
 
 '
   m_isRightToLeft: 0
@@ -270,15 +270,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 44.75
-  m_fontSizeBase: 36
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
@@ -349,8 +349,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -162, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: -177, y: 7}
+  m_SizeDelta: {x: 81.8328, y: 81.8328}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5718969527217375746
 CanvasRenderer:
@@ -424,8 +424,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 163.54, y: 34}
-  m_SizeDelta: {x: 89.07, y: 50}
+  m_AnchoredPosition: {x: 138, y: 27.000015}
+  m_SizeDelta: {x: 96.075, y: 28.898}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7220710849080338978
 CanvasRenderer:
@@ -455,9 +455,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'amount
-
-'
+  m_text: 999
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -484,15 +482,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 26.4
-  m_fontSizeBase: 36
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
@@ -563,8 +561,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 54.035, y: -21.4584}
-  m_SizeDelta: {x: 308.07, y: 48.9169}
+  m_AnchoredPosition: {x: 32, y: -13.747986}
+  m_SizeDelta: {x: 308.07, y: 52.598}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8259946570685633116
 CanvasRenderer:
@@ -594,7 +592,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: desc
+  m_text: 'zzzzzzzzzzzzzzzzzzzzzzzzzz
+
+    zzzzzzzzzzzzzzzzzzzzzzzzzz'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -621,12 +621,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 43.75
-  m_fontSizeBase: 36
+  m_fontSize: 23.2
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_fontSizeMax: 24
   m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
