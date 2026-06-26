@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    [Header("Settings")]
     public float moveSpeed = 30f;
+
+    [Header("Input")]
+    [Tooltip("Drag your InputReader ScriptableObject asset here.")]
+    public InputReader inputReader;
 
     [Header("Camera Reference (Optional Override)")]
     public Transform cameraTransform;
@@ -16,6 +21,7 @@ public class PlayerMovement : MonoBehaviour
 
     private string  lastDirection = "Up";
     private Vector3 lookDirection = Vector3.forward;
+    private Vector2 rawInput;
 
     void Start()
     {
@@ -25,32 +31,42 @@ public class PlayerMovement : MonoBehaviour
 
         if (cameraTransform == null && Camera.main != null)
             cameraTransform = Camera.main.transform;
+
+        if (inputReader != null)
+            inputReader.OnMoveEvent += HandleMove;
+    }
+
+    void OnDestroy()
+    {
+        if (inputReader != null)
+            inputReader.OnMoveEvent -= HandleMove;
+    }
+
+    private void HandleMove(Vector2 input)
+    {
+        rawInput = input;
     }
 
     void Update()
     {
-        // Block all input if the player isn't free
         if (!PlayerStateManager.IsFree)
         {
-            // Zero out movement so the player stops instantly
             moveInput = Vector3.zero;
-            HandleAnimations(); // Still update animations so idle plays correctly
+            rawInput  = Vector2.zero;
+            HandleAnimations();
             return;
         }
-
-        float moveX = Input.GetAxisRaw("Horizontal");
-        float moveZ = Input.GetAxisRaw("Vertical");
 
         float cameraYRotation = cameraTransform != null ? cameraTransform.eulerAngles.y : 0f;
         Quaternion cameraRotation = Quaternion.Euler(0f, cameraYRotation, 0f);
 
-        Vector3 rawInput = new Vector3(moveX, 0f, moveZ).normalized;
-        moveInput = cameraRotation * rawInput;
+        Vector3 raw3D = new Vector3(rawInput.x, 0f, rawInput.y).normalized;
+        moveInput = cameraRotation * raw3D;
 
         if (moveInput.magnitude > 0)
             lookDirection = moveInput.normalized;
 
-        UpdateFacingDirection(moveX, moveZ);
+        UpdateFacingDirection(rawInput.x, rawInput.y);
         HandleAnimations();
     }
 

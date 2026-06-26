@@ -2,17 +2,20 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.InputSystem;
 
 public class OptionUI : MonoBehaviour
 {
-    [Header("YesNo Dialogue Panel")]
-    public GameObject yesNoDialogue;
+    [Header("Input")]
+    [Tooltip("Drag your InputReader ScriptableObject asset here.")]
+    public InputReader inputReader;
+
+    [Header("YesNo Panel")]
+    public GameObject yesNoPanel;
     public Button     yesButton;
     public Button     noButton;
 
     [Header("Inventory List Panel")]
-    public GameObject inventoryList;
+    public GameObject inventoryListPanel;
     public Transform  inventoryListContainer;
     public GameObject seedListItemPrefab;
 
@@ -22,9 +25,8 @@ public class OptionUI : MonoBehaviour
 
     private Action _onYes;
     private Action _onNo;
-
-    private int  _yesNoIndex  = 0;
-    private bool _yesNoActive = false;
+    private int    _yesNoIndex  = 0;
+    private bool   _yesNoActive = false;
 
     private List<SeedListItem> _listItems = new List<SeedListItem>();
     private int  _listIndex  = 0;
@@ -34,17 +36,28 @@ public class OptionUI : MonoBehaviour
 
     void Start()
     {
-        if (yesNoDialogue != null) yesNoDialogue.SetActive(false);
-        if (inventoryList != null) inventoryList.SetActive(false);
+        if (yesNoPanel       != null) yesNoPanel.SetActive(false);
+        if (inventoryListPanel != null) inventoryListPanel.SetActive(false);
 
-        if (yesButton != null) yesButton.onClick.AddListener(OnYesClicked);
-        if (noButton  != null) noButton.onClick.AddListener(OnNoClicked);
+        if (yesButton != null) yesButton.onClick.AddListener(ConfirmYes);
+        if (noButton  != null) noButton.onClick.AddListener(ConfirmNo);
+
+        if (inputReader != null)
+        {
+            inputReader.OnNavigateEvent += HandleNavigate;
+            inputReader.OnConfirmEvent  += HandleConfirm;
+            inputReader.OnCancelEvent   += HandleCancel;
+        }
     }
 
-    void Update()
+    void OnDestroy()
     {
-        if (_yesNoActive) HandleYesNoNavigation();
-        if (_listActive)  HandleListNavigation();
+        if (inputReader != null)
+        {
+            inputReader.OnNavigateEvent -= HandleNavigate;
+            inputReader.OnConfirmEvent  -= HandleConfirm;
+            inputReader.OnCancelEvent   -= HandleCancel;
+        }
     }
 
     public void ShowYesNo(Action onYes, Action onNo = null)
@@ -55,96 +68,45 @@ public class OptionUI : MonoBehaviour
         _yesNoActive = true;
         _listActive  = false;
 
-        if (yesNoDialogue != null) yesNoDialogue.SetActive(true);
-        if (inventoryList != null) inventoryList.SetActive(false);
+        if (yesNoPanel        != null) yesNoPanel.SetActive(true);
+        if (inventoryListPanel != null) inventoryListPanel.SetActive(false);
 
-        HighlightYesNo();
+        RefreshYesNoHighlight();
     }
 
-    private void HandleYesNoNavigation()
-    {
-        if (Keyboard.current == null) return;
-
-        if (Keyboard.current.aKey.wasPressedThisFrame || Keyboard.current.leftArrowKey.wasPressedThisFrame ||
-            Keyboard.current.wKey.wasPressedThisFrame || Keyboard.current.upArrowKey.wasPressedThisFrame)
-        {
-            _yesNoIndex = 0;
-            HighlightYesNo();
-        }
-        else if (Keyboard.current.dKey.wasPressedThisFrame || Keyboard.current.rightArrowKey.wasPressedThisFrame ||
-                 Keyboard.current.sKey.wasPressedThisFrame || Keyboard.current.downArrowKey.wasPressedThisFrame)
-        {
-            _yesNoIndex = 1;
-            HighlightYesNo();
-        }
-
-        if (Keyboard.current.enterKey.wasPressedThisFrame)
-        {
-            if (_yesNoIndex == 0) OnYesClicked();
-            else OnNoClicked();
-        }
-
-        if (Keyboard.current.escapeKey.wasPressedThisFrame)
-            OnNoClicked();
-    }
-
-    private void HighlightYesNo()
-    {
-        SetButtonColor(yesButton, _yesNoIndex == 0 ? highlightColor : normalColor);
-        SetButtonColor(noButton, _yesNoIndex == 1 ? highlightColor : normalColor);
-    }
-
-    private void OnYesClicked()
+    public void ShowInventoryList(List<SeedInventoryEntry> seeds, Action<SeedData> onSelected)
     {
         _yesNoActive = false;
-        if (yesNoDialogue != null) yesNoDialogue.SetActive(false);
+        _listActive  = true;
 
-        _onYes?.Invoke();
-    }
-
-    private void OnNoClicked()
-    {
-        HideAll();
-        _onNo?.Invoke();
-    }
-
-    public void ShowInventoryList(List<SeedInventoryEntry> seeds, Action<SeedData> onSeedSelected)
-    {
-        _yesNoActive = false;
-        if (yesNoDialogue != null) yesNoDialogue.SetActive(false);
-
-        _listActive = true;
-        if (inventoryList != null) inventoryList.SetActive(true);
+        if (yesNoPanel        != null) yesNoPanel.SetActive(false);
+        if (inventoryListPanel != null) inventoryListPanel.SetActive(true);
 
         foreach (var item in _listItems)
-        {
             if (item != null) Destroy(item.gameObject);
-        }
         _listItems.Clear();
 
         if (seeds == null || seeds.Count == 0)
         {
-            Debug.Log("Inventory collection holds zero entries.");
-            HideAll();
+            HidePanels();
             return;
         }
 
         foreach (var entry in seeds)
         {
-            if (seedListItemPrefab != null && inventoryListContainer != null)
+            if (seedListItemPrefab == null || inventoryListContainer == null) continue;
+
+            GameObject   obj  = Instantiate(seedListItemPrefab, inventoryListContainer);
+            SeedListItem item = obj.GetComponent<SeedListItem>();
+
+            if (item != null)
             {
-                GameObject obj = Instantiate(seedListItemPrefab, inventoryListContainer);
-                SeedListItem listItem = obj.GetComponent<SeedListItem>();
-                
-                if (listItem != null)
+                item.Setup(entry, () =>
                 {
-                    listItem.Setup(entry, () =>
-                    {
-                        HideAll();
-                        onSeedSelected?.Invoke(entry.seedData);
-                    });
-                    _listItems.Add(listItem);
-                }
+                    HidePanels();
+                    onSelected?.Invoke(entry.seedData);
+                });
+                _listItems.Add(item);
             }
         }
 
@@ -152,39 +114,82 @@ public class OptionUI : MonoBehaviour
         MoveToFirstAvailable();
     }
 
-    private void HandleListNavigation()
+    public void HidePanels()
     {
-        if (Keyboard.current == null || _listItems.Count == 0) return;
+        _yesNoActive = false;
+        _listActive  = false;
 
-        if (Keyboard.current.sKey.wasPressedThisFrame || Keyboard.current.downArrowKey.wasPressedThisFrame)
-        {
-            _listIndex = Mathf.Min(_listIndex + 1, _listItems.Count - 1);
-            HighlightList();
-        }
-        else if (Keyboard.current.wKey.wasPressedThisFrame || Keyboard.current.upArrowKey.wasPressedThisFrame)
-        {
-            _listIndex = Mathf.Max(_listIndex - 1, 0);
-            HighlightList();
-        }
+        if (yesNoPanel        != null) yesNoPanel.SetActive(false);
+        if (inventoryListPanel != null) inventoryListPanel.SetActive(false);
+    }
 
-        if (Keyboard.current.enterKey.wasPressedThisFrame)
+    private void HandleNavigate(Vector2 dir)
+    {
+        if (_yesNoActive) NavigateYesNo(dir);
+        if (_listActive)  NavigateList(dir);
+    }
+
+    private void HandleConfirm()
+    {
+        if (_yesNoActive)
+        {
+            if (_yesNoIndex == 0) ConfirmYes();
+            else                  ConfirmNo();
+        }
+        else if (_listActive)
         {
             if (_listIndex >= 0 && _listIndex < _listItems.Count)
             {
-                SeedListItem selected = _listItems[_listIndex];
-                if (selected.HasStock)
-                {
-                    if (selected.selectButton != null)
-                        selected.selectButton.onClick.Invoke();
-                }
+                SeedListItem sel = _listItems[_listIndex];
+                if (sel.HasStock && sel.selectButton != null)
+                    sel.selectButton.onClick.Invoke();
             }
         }
-
-        if (Keyboard.current.escapeKey.wasPressedThisFrame)
-            HideAll();
     }
 
-    private void HighlightList()
+    private void HandleCancel()
+    {
+        if (_yesNoActive) ConfirmNo();
+        else if (_listActive) HidePanels();
+    }
+
+    private void NavigateYesNo(Vector2 dir)
+    {
+        if (dir.x < -0.1f || dir.y > 0.1f)       _yesNoIndex = 0;
+        else if (dir.x > 0.1f || dir.y < -0.1f)  _yesNoIndex = 1;
+        RefreshYesNoHighlight();
+    }
+
+    private void ConfirmYes()
+    {
+        _yesNoActive = false;
+        if (yesNoPanel != null) yesNoPanel.SetActive(false);
+        _onYes?.Invoke();
+    }
+
+    private void ConfirmNo()
+    {
+        HidePanels();
+        _onNo?.Invoke();
+    }
+
+    private void NavigateList(Vector2 dir)
+    {
+        if (_listItems.Count == 0) return;
+
+        if (dir.y < -0.1f)      _listIndex = Mathf.Min(_listIndex + 1, _listItems.Count - 1);
+        else if (dir.y > 0.1f)  _listIndex = Mathf.Max(_listIndex - 1, 0);
+
+        RefreshListHighlight();
+    }
+
+    private void RefreshYesNoHighlight()
+    {
+        SetButtonColor(yesButton, _yesNoIndex == 0 ? highlightColor : normalColor);
+        SetButtonColor(noButton,  _yesNoIndex == 1 ? highlightColor : normalColor);
+    }
+
+    private void RefreshListHighlight()
     {
         for (int i = 0; i < _listItems.Count; i++)
         {
@@ -197,38 +202,17 @@ public class OptionUI : MonoBehaviour
     {
         for (int i = 0; i < _listItems.Count; i++)
         {
-            if (_listItems[i].HasStock)
-            {
-                _listIndex = i;
-                break;
-            }
+            if (_listItems[i].HasStock) { _listIndex = i; break; }
         }
-        HighlightList();
+        RefreshListHighlight();
     }
 
     private void SetButtonColor(Button button, Color color)
     {
         if (button == null) return;
-        ColorBlock cb   = button.colors;
-        cb.normalColor  = color;
+        ColorBlock cb    = button.colors;
+        cb.normalColor   = color;
         cb.selectedColor = color;
-        button.colors   = cb;
-    }
-
-    public void HideAll()
-    {
-        _yesNoActive = false;
-        _listActive  = false;
-        
-        if (yesNoDialogue != null) yesNoDialogue.SetActive(false);
-        if (inventoryList != null) inventoryList.SetActive(false);
-
-        PlayerStateManager.SetState(PlayerState.Free);
-
-        PlayerAction playerAction = FindFirstObjectByType<PlayerAction>();
-        if (playerAction != null)
-        {
-            playerAction.CloseDialogue();
-        }
+        button.colors    = cb;
     }
 }

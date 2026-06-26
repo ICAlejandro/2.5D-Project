@@ -4112,10 +4112,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2823bdd484ed90f429ffa481d591b950, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameplayUI
-  yesNoDialogue: {fileID: 897201652}
+  inputReader: {fileID: 11400000, guid: a3a60d66fcdf16f4dac59a884135908a, type: 2}
+  yesNoPanel: {fileID: 897201652}
   yesButton: {fileID: 2023560953}
   noButton: {fileID: 1527028190}
-  inventoryList: {fileID: 872553900}
+  inventoryListPanel: {fileID: 872553900}
   inventoryListContainer: {fileID: 1215763939}
   seedListItemPrefab: {fileID: 291840404977297548, guid: 3162d30ae6f3b4c4681117432531d1d9, type: 3}
   highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
@@ -5093,7 +5094,7 @@ MonoBehaviour:
   deliveryTimeSeconds: 5
   packagePrefab: {fileID: 4489365907213157896, guid: dff0f44e1c4694c46bbe60ba62d2c667, type: 3}
   deliverySpawnPoint: {fileID: 201465787}
-  seedForSale: {fileID: 0}
+  seedForSale: {fileID: 11400000, guid: 0f5c24f0d97e6c24cad92840f9f8cf07, type: 2}
 --- !u!114 &1776229854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5398,6 +5399,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   moveSpeed: 18
+  inputReader: {fileID: 11400000, guid: a3a60d66fcdf16f4dac59a884135908a, type: 2}
   cameraTransform: {fileID: 0}
 --- !u!95 &1880889711
 Animator:
@@ -5481,6 +5483,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0be031c04a75b946847d5eea15aa53f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAction
+  inputReader: {fileID: 11400000, guid: a3a60d66fcdf16f4dac59a884135908a, type: 2}
   interactionDistance: 4
   interactableLayer:
     serializedVersion: 2

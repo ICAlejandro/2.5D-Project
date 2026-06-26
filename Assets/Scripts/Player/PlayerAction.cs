@@ -1,11 +1,14 @@
 using UnityEngine;
 using TMPro;
-using UnityEngine.InputSystem;
 
 public class PlayerAction : MonoBehaviour
 {
+    [Header("Input")]
+    [Tooltip("Drag your InputReader ScriptableObject asset here.")]
+    public InputReader inputReader;
+
     [Header("Interaction Settings")]
-    public float interactionDistance = 4f;
+    public float     interactionDistance = 4f;
     public LayerMask interactableLayer;
 
     [Header("BoxCast Dimensions")]
@@ -18,7 +21,7 @@ public class PlayerAction : MonoBehaviour
     public TextMeshProUGUI dialogueText;
 
     private PlayerMovement _playerMovement;
-    private int            _dialogueOpenedFrame = -1;
+    private int            _lastDialogueFrame = -1;
 
     void Start()
     {
@@ -32,38 +35,42 @@ public class PlayerAction : MonoBehaviour
             int idx = LayerMask.NameToLayer("Interactables");
             if (idx != -1) interactableLayer = 1 << idx;
         }
+
+        if (inputReader != null)
+        {
+            inputReader.OnInteractEvent += HandleInteract;
+            inputReader.OnConfirmEvent  += HandleConfirm;
+        }
     }
 
-    void Update()
+    void OnDestroy()
+    {
+        if (inputReader != null)
+        {
+            inputReader.OnInteractEvent -= HandleInteract;
+            inputReader.OnConfirmEvent  -= HandleConfirm;
+        }
+    }
+
+    private void HandleInteract()
     {
         if (PlayerStateManager.IsState(PlayerState.Cutscene)) return;
-        if (Keyboard.current == null) return;
+        if (Time.frameCount == _lastDialogueFrame) return;
 
-        if (Keyboard.current.enterKey.wasPressedThisFrame)
-        {
-            if (PlayerStateManager.IsFree)
-            {
-                if (dialogueCanvas != null && dialogueCanvas.activeSelf)
-                {
-                    CloseDialogue();
-                }
-                else
-                {
-                    TryInteract();
-                }
-            }
-            else if (PlayerStateManager.IsState(PlayerState.Dialogue))
-            {
-                if (Time.frameCount == _dialogueOpenedFrame) return;
+        if (PlayerStateManager.IsFree)
+            TryInteract();
+    }
 
-                OptionUI optionUI = FindFirstObjectByType<OptionUI>();
-                
-                if (optionUI == null || !optionUI.IsMenuOpen)
-                {
-                    CloseDialogue();
-                }
-            }
-        }
+    private void HandleConfirm()
+    {
+        if (PlayerStateManager.IsState(PlayerState.Cutscene)) return;
+        if (Time.frameCount == _lastDialogueFrame) return;
+
+        if (!PlayerStateManager.IsState(PlayerState.Dialogue)) return;
+
+        OptionUI optionUI = FindFirstObjectByType<OptionUI>();
+        if (optionUI == null || !optionUI.IsMenuOpen)
+            CloseDialogue();
     }
 
     private void TryInteract()
@@ -77,37 +84,31 @@ public class PlayerAction : MonoBehaviour
 
         Vector3 half = new Vector3(boxWidth, boxHeight, boxDepth) * 0.5f;
 
-        if (Physics.BoxCast(transform.position, half, look, out RaycastHit hit, Quaternion.identity, interactionDistance, interactableLayer))
+        if (Physics.BoxCast(transform.position, half, look, out RaycastHit hit,
+                            Quaternion.identity, interactionDistance, interactableLayer))
         {
-            Debug.Log($"BoxCast hit: {hit.collider.gameObject.name}");
             Interactable target = hit.collider.GetComponentInParent<Interactable>();
             target?.Interact(gameObject);
-        }
-        else
-        {
-            Debug.LogWarning("BoxCast hit nothing on Interactables layer.");
         }
     }
 
     public void DisplayDialogue(string text)
     {
-        if (dialogueCanvas == null || dialogueText == null)
-        {
-            Debug.LogWarning("PlayerAction: dialogueCanvas or dialogueText not assigned!");
-            return;
-        }
+        if (dialogueCanvas == null || dialogueText == null) return;
 
         dialogueText.text = text;
         dialogueCanvas.SetActive(true);
+        _lastDialogueFrame = Time.frameCount;
+
         PlayerStateManager.SetState(PlayerState.Dialogue);
-        
-        _dialogueOpenedFrame = Time.frameCount;
     }
 
     public void CloseDialogue()
     {
         if (dialogueCanvas != null)
             dialogueCanvas.SetActive(false);
+
+        _lastDialogueFrame = Time.frameCount;
 
         PlayerStateManager.SetState(PlayerState.Free);
     }
