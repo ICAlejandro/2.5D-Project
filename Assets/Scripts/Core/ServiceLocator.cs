@@ -2,6 +2,16 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// A simple phonebook for shared game services.
+/// Attach this to your Manager GameObject in the scene.
+///
+/// REGISTER (in Awake on the owning script):
+///   ServiceLocator.Register<ITimeProvider>(this);
+///
+/// RESOLVE (anywhere else):
+///   var tm = ServiceLocator.Get<ITimeProvider>();
+/// </summary>
 public class ServiceLocator : MonoBehaviour
 {
     public static ServiceLocator Instance { get; private set; }

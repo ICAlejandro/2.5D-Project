@@ -3,6 +3,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+/// <summary>
+/// Controls one row in the seed selection list.
+/// Exposes HasStock and SelectItem() for keyboard navigation via OptionUI.
+/// </summary>
 public class SeedListItem : MonoBehaviour
 {
     [Header("UI References")]
@@ -41,6 +45,7 @@ public class SeedListItem : MonoBehaviour
             group.alpha = HasStock ? 1f : 0.4f;
     }
 
+    /// <summary>Called by button click or keyboard Enter in OptionUI.</summary>
     public void SelectItem()
     {
         _onSelected?.Invoke();

@@ -1,5 +1,10 @@
 using UnityEngine;
 
+/// <summary>
+/// ScriptableObject that holds all data for one seed/crop type.
+/// Create a new one in Unity via: Right Click > Create > Farming > Seed Data
+/// Fill in all fields in the Inspector — no coding needed to add new crops.
+/// </summary>
 [CreateAssetMenu(fileName = "NewSeedData", menuName = "Farming/Seed Data")]
 public class SeedData : ScriptableObject
 {

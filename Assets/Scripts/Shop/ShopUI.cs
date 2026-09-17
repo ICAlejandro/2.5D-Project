@@ -1,6 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Handles shop UI only — opening/closing the panel and cursor state.
+/// Transaction logic lives separately in OnlineShop.cs on the same GameObject.
+/// Uses PlayerStateManager to lock/unlock player movement.
+/// </summary>
 public class ShopUI : MonoBehaviour
 {
     [Header("UI Panel Reference")]
