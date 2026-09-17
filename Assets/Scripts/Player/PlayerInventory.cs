@@ -2,6 +2,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Concrete inventory. Seed types are configured in the Inspector
+/// via the Seed Inventory list — no coding needed to add new seed types.
+/// </summary>
 public class PlayerInventory : MonoBehaviour, IInventory
 {
     [Header("Gold & Crops")]

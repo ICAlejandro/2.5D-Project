@@ -1,6 +1,10 @@
 using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// Handles shop transaction logic only — buying seeds and selling crops.
+/// UI open/close is handled separately by ShopUI.cs on the same GameObject.
+/// </summary>
 public class OnlineShop : Interactable
 {
     [Header("Shop Balancing")]
